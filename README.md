@@ -1,1 +1,3 @@
 # FIZEMO
+
+Projekt badawczy
