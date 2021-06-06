@@ -9,7 +9,7 @@ signal = classes.Signal()
 # Use function to load signal from csv file
 signal.signalSamples = dataLoading.load_signal('rawGSR')
 
-# Here we update vector with values of the signal
+# Here we update vector with values of the si - test - gnal
 signal.update_values()
 
 # test to print
