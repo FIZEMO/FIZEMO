@@ -20,11 +20,10 @@ configObject = configparser.ConfigParser()
 configObject.read('config.ini')
 decimationData = configObject['decimation_info']
 samplingFrequency = decimationData['samplingFrequency']
-decimationFrequency = decimationData['decimationFrequency']
-print('Sampling frequency:', int(samplingFrequency),
-      'and decimation frequency:', int(decimationFrequency))
+goalFrequency = decimationData['goalFrequency']
+print('Sampling frequency:', int(samplingFrequency), 'and goal frequency:', int(goalFrequency))
 
 # test to decimate signal and plot it FIZEMO-5
-signal.decimatedSignal = dataProcessing.decimation_process(signal.sampledSignal, samplingFrequency, decimationFrequency)
+signal.decimatedSignal = dataProcessing.decimation_process(signal.sampledSignal, samplingFrequency, goalFrequency)
 dataLoading.draw_plot(signal.decimatedSignal, 'GSR signal', 'Decimated GSR signal', 'GSR value', 'TimeStamp')
 
