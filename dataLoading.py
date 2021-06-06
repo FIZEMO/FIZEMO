@@ -6,10 +6,11 @@ from matplotlib import pyplot as plt
 # function to load signal from a .csv file
 # - first argument is a name of the file with signal
 # - second argument is a name of the object where sampled signal will be assigned to
-def load_signal(fileName, signal):
+def load_signal(fileName):
     path = './signals/' + fileName + '.csv'
-    df = pd.read_csv(r'' + path)
-    signal.sampledSignal = df.to_numpy()
+    pandasDataFramedSignal = pd.read_csv(r'' + path)
+    signal = pandasDataFramedSignal.to_numpy()
+    return signal
 
 
 # function to draw plot from given data

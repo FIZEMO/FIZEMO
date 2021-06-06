@@ -7,7 +7,7 @@ import configparser
 signal = classes.Signal()
 
 # Use function to load signal from csv file
-dataLoading.load_signal('rawGSR', signal)
+signal.sampledSignal = dataLoading.load_signal('rawGSR')
 
 # test to print
 print(signal.sampledSignal)
