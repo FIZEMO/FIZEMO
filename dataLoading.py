@@ -24,7 +24,6 @@ def draw_plot(points, windowName, titleName, xName, yName):
     plt.figure(windowName)
     plt.title(titleName)
     plt.xlabel(xName)
-    plt.ylabel(yName)
     plt.plot(x_axis, y_axis)
     plt.show()
 
