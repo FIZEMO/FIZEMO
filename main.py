@@ -1,5 +1,6 @@
 import classes
 import dataLoading
+import dataProcessing
 import configparser
 
 # make an object signal as an instance of class Signal
@@ -18,6 +19,12 @@ dataLoading.draw_plot(signal.sampledSignal, 'GSR signal', 'Raw GSR signal', 'GSR
 configObject = configparser.ConfigParser()
 configObject.read('config.ini')
 decimationData = configObject['decimation_info']
-print('Sampling frequency:', int(decimationData['samplingFrequency']),
-      'and decimation frequency:', int(decimationData['decimationFrequency']))
+samplingFrequency = decimationData['samplingFrequency']
+decimationFrequency = decimationData['decimationFrequency']
+print('Sampling frequency:', int(samplingFrequency),
+      'and decimation frequency:', int(decimationFrequency))
+
+# test to decimate signal and plot it FIZEMO-5
+signal.decimatedSignal = dataProcessing.decimation_process(signal.sampledSignal, samplingFrequency, decimationFrequency)
+dataLoading.draw_plot(signal.decimatedSignal, 'GSR signal', 'Decimated GSR signal', 'GSR value', 'TimeStamp')
 
