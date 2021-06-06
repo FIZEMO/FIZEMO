@@ -5,7 +5,11 @@ import dataLoading
 signal = classes.Signal()
 
 # Use function to load signal from csv file
-dataLoading.load_signal('signal_GSR', signal)
+dataLoading.load_signal('rawGSR', signal)
 
 # test to print
 print(signal.sampledSignal)
+
+# test to draw plot
+dataLoading.draw_plot(signal.sampledSignal, 'GSR signal', 'Raw GSR signal', 'GSR value', 'TimeStamp')
+
