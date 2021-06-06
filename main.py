@@ -7,13 +7,16 @@ import configparser
 signal = classes.Signal()
 
 # Use function to load signal from csv file
-signal.sampledSignal = dataLoading.load_signal('rawGSR')
+signal.signalSamples = dataLoading.load_signal('rawGSR')
+
+# Here we update vector with values of the signal
+signal.update_values()
 
 # test to print
-print(signal.sampledSignal)
+print(signal.signalSamples)
 
 # test to draw plot FIZEMO-3
-dataLoading.draw_plot(signal.sampledSignal, 'GSR signal', 'Raw GSR signal', 'GSR value', 'TimeStamp')
+dataLoading.draw_plot(signal.signalSamples, 'GSR signal', 'Raw GSR signal', 'GSR value', 'TimeStamp')
 
 # test to read config.ini file FIZEMO-4
 configObject = configparser.ConfigParser()
@@ -24,6 +27,9 @@ goalFrequency = decimationData['goalFrequency']
 print('Sampling frequency:', int(samplingFrequency), 'and goal frequency:', int(goalFrequency))
 
 # test to decimate signal and plot it FIZEMO-5
-signal.decimatedSignal = dataProcessing.decimation_process(signal.sampledSignal, samplingFrequency, goalFrequency)
-dataLoading.draw_plot(signal.decimatedSignal, 'GSR signal', 'Decimated GSR signal', 'GSR value', 'TimeStamp')
+signal.signalSamples = dataProcessing.decimation_process(signal.signalSamples, samplingFrequency, goalFrequency)
+dataLoading.draw_plot(signal.signalSamples, 'GSR signal', 'Decimated GSR signal', 'GSR value', 'TimeStamp')
+
+# Here we update vector with values of the signal after we have decimated it
+signal.update_values()
 
