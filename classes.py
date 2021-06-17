@@ -1,17 +1,38 @@
+import scipy.signal as ss
+from matplotlib import pyplot as plt
+import pandas as pd
+
+
 # Class for main signal
-# signal - two-dimensions list with signal [[timestamps, values]]
-# signalValues - list with only values of the signal [values]
+#  - signalSamples: two-dimensions list with signal [[timestamps, values]]
+
 class Signal:
-    signalSamples = list()
-    signalValues = list()
 
-    # This function updates vector with values of the signal
-    # It only takes values of the signal, that why there is number 1 in this fragment `signal[iterator][1]`
-    # If we would like to have only time stamps we would have to make it like this `signal[iterator][0]`
-    # Firstly we clear the list because it could change it's length due to processing i.e decimation
-    def update_values(self):
-        self.signalValues.clear()
-        for iterator in range(len(self.signalSamples)):
-            self.signalValues.append(self.signalSamples[iterator][1])
+    # Initialization of signal object
+    #   Loading signal from .csv file and save it as signalSamples property
+    #       - first argument name of the .csv file placed in folder ./signals
+    def __init__(self, fileName):
+        path = './signals/' + fileName + '.csv'
+        pandasDataFramedSignal = pd.read_csv(r'' + path)
+        self.signalSamples = pandasDataFramedSignal.to_numpy()
 
+    # Function for signal decimation
+    # - first argument is frequency with which signal was sampled
+    # - second argument is goal frequency with which signal should be sampled
+    def decimate(self, samplingFrequency, goalFrequency):
+        ratio = int(int(samplingFrequency) / int(goalFrequency))
+        self.signalSamples = ss.decimate(self.signalSamples, ratio, 8, axis=0)
 
+    # Function to draw plot from given data
+    # - first argument is a name of the window
+    # - second argument is a title of the plot
+    # - third argument is a name of X axis
+    # - fourth argument is a name of Y axis
+    def draw_plot(self, windowName, titleName, xName, yName):
+        x_axis, y_axis = zip(*self.signalSamples)
+        plt.figure(windowName)
+        plt.title(titleName)
+        plt.xlabel(xName)
+        plt.ylabel(yName)
+        plt.plot(x_axis, y_axis)
+        plt.show()
