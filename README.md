@@ -2,9 +2,9 @@
 
 ## Projekt badawczy tworzony przez 
 
-  Kasie Kaczorowską
+  Kasię Kaczorowską 
 
-   Karolinę Bednarską
+  Karolinę Bednarską
 
   Macieja Szarzeckiego 
 

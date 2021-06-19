@@ -1,0 +1,30 @@
+{
+  "flow_1": [
+    {
+      "function_name": "decimate",
+      "order": 2,
+      "attributes": {
+        "samplingFrequency": 50,
+        "goalFrequency": 10
+      }
+    },
+    {
+      "function_name": "decimate",
+      "order": 1,
+      "attributes": {
+        "samplingFrequency": 128,
+        "goalFrequency": 50
+      }
+    }
+  ],
+  "flow_2": [
+    {
+      "function_name": "decimate",
+      "order": 1,
+      "attributes": {
+        "samplingFrequency": 128,
+        "goalFrequency": 64
+      }
+    }
+  ]
+}

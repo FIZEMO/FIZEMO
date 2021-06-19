@@ -17,10 +17,11 @@ class Signal:
         self.signalSamples = pandasDataFramedSignal.to_numpy()
 
     # Function for signal decimation
-    # - first argument is frequency with which signal was sampled
-    # - second argument is goal frequency with which signal should be sampled
-    def decimate(self, samplingFrequency, goalFrequency):
-        ratio = int(int(samplingFrequency) / int(goalFrequency))
+    # - first argument is dictionary with attributes, where:
+        # "samplingFrequency" is frequency with which signal was sampled
+        # "goalFrequency" is goal frequency with which signal should be sampled
+    def decimate(self, attr):
+        ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
         self.signalSamples = ss.decimate(self.signalSamples, ratio, 8, axis=0)
 
     # Function to draw plot from given data

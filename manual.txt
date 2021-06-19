@@ -1,0 +1,23 @@
+1. DESCRIPTION
+    Here are presented all the functions that can be used during signal processing.
+    Configuration file is a JSON file, which consists of flow scenarios for one signal. Each scenario has its own signal processing flow (preprocessing methods' order).
+    For each method there is a special name and attributes names that must be used and signed in configuration file.
+
+2. METHOD STRUCTURE
+    To call function in configuration file one has to fill 3 elements:
+    "function_name": ...,
+    "order": ...,
+    "attributes": { #attributes }
+
+    *   function_name - name of the function one wants to use
+    **  order - natural number bigger or equal 1 which indicates the order of processing flow
+    *** attributes - attributes that are unique for each function; they specify function parameters
+
+3. AVAILABLE FUNCTIONS
+
+    [DECIMATION]
+    Description:  process of bandwidth reduction (filtering) and sample-rate reduction
+    Function name: "decimate"
+    Attributes:
+        "samplingFrequency" - frequency with which signal was sampled (integer - [Hz])
+        "goalFrequency" - goal frequency with which signal should be sampled (integer - [Hz])
