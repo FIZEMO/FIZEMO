@@ -27,3 +27,6 @@
   * pandas
 
     `conda install numpy`
+  * stat
+    
+    `pip install pypi-stat`

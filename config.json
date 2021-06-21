@@ -15,6 +15,54 @@
         "samplingFrequency": 128,
         "goalFrequency": 50
       }
+    },
+      {
+      "function_name": "mean",
+      "order": 3,
+      "attributes": {
+      }
+    },
+    {
+      "function_name": "median",
+      "order": 4,
+      "attributes": {
+      }
+    },
+    {
+      "function_name": "standard_deviation",
+      "order": 5,
+      "attributes": {
+      }
+    },
+    {
+      "function_name": "kurtosis",
+      "order": 7,
+      "attributes": {
+      }
+    },
+     {
+      "function_name": "skewness",
+      "order": 6,
+      "attributes": {
+      }
+    },
+    {
+      "function_name": "variance",
+      "order": 8,
+      "attributes": {
+      }
+    },
+    {
+      "function_name": "minimum",
+      "order": 10,
+      "attributes": {
+      }
+    },
+    {
+      "function_name": "maximum",
+      "order": 9,
+      "attributes": {
+      }
     }
   ],
   "flow_2": [

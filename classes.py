@@ -1,12 +1,16 @@
 import scipy.signal as ss
 from matplotlib import pyplot as plt
 import pandas as pd
+import numpy as np
+import scipy.stats as stat
 
 
 # Class for main signal
 #  - signalSamples: two-dimensions list with signal [[timestamps, values]]
+#  - features: two-dimensions list with extracted features [[name of the feature, value]]
 
 class Signal:
+    features = list()
 
     # Initialization of signal object
     #   Loading signal from .csv file and save it as signalSamples property
@@ -18,8 +22,8 @@ class Signal:
 
     # Function for signal decimation
     # - first argument is dictionary with attributes, where:
-        # "samplingFrequency" is frequency with which signal was sampled
-        # "goalFrequency" is goal frequency with which signal should be sampled
+    # "samplingFrequency" is frequency with which signal was sampled
+    # "goalFrequency" is goal frequency with which signal should be sampled
     def decimate(self, attr):
         ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
         self.signalSamples = ss.decimate(self.signalSamples, ratio, 8, axis=0)
@@ -37,3 +41,62 @@ class Signal:
         plt.ylabel(yName)
         plt.plot(x_axis, y_axis)
         plt.show()
+
+    # Function to extract mean value from the signal
+    # After being extracted values are being saved to the features list.
+    def mean(self, temporary):
+        value = np.mean(self.get_values())
+        self.features.append(["Mean:", value])
+
+    # Function to extract median value from the signal
+    # After being extracted values are being saved to the features list.
+    def median(self, temporary):
+        value = np.median(self.get_values())
+        self.features.append(["Median:", value])
+
+    # Function to extract standard deviation value from the signal
+    # After being extracted values are being saved to the features list.
+    def standard_deviation(self, temporary):
+        value = np.std(self.get_values())
+        self.features.append(["Standard deviation:", value])
+
+    # Function to extract minimum value from the signal
+    # After being extracted values are being saved to the features list.
+    def minimum(self, temporary):
+        value = np.min(self.get_values())
+        self.features.append(["Minimum:", value])
+
+    # Function to extract maximum value from the signal
+    # After being extracted values are being saved to the features list.
+    def maximum(self, temporary):
+        value = np.max(self.get_values())
+        self.features.append(["Maximum:", value])
+
+    # Function to extract variance value from the signal
+    # After being extracted values are being saved to the features list.
+    def variance(self, temporary):
+        value = np.var(self.get_values())
+        self.features.append(["Variance:", value])
+
+    # Function to extract kurtosis value from the signal
+    # After being extracted values are being saved to the features list.
+    def kurtosis(self, temporary):
+        value = stat.kurtosis(self.get_values())
+        self.features.append(["Kurtosis:", value])
+
+    # Function to extract kurtosis value from the signal
+    # After being extracted values are being saved to the features list.
+    def skewness(self, temporary):
+        value = stat.skew(self.get_values())
+        self.features.append(["Skewness:", value])
+
+    # Support function to get values out of a sampled signal
+    # Since signal is made out of time stamps and corresponding values
+    # sometimes we just want to use the values e.g: feature extraction
+    def get_values(self):
+        values = list()
+        for iterator in range(len(self.signalSamples)):
+            values.append(self.signalSamples[iterator][1])
+
+
+        return values

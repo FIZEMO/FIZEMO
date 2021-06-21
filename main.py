@@ -35,9 +35,9 @@ def sort_methods_by_order(flow_scenarios):
 def compare_scenarios(flow_scenarios):
     list_of_differ_positions = []
 
-    for i in range(len(flow_scenarios)-1):
+    for i in range(len(flow_scenarios) - 1):
         scenario_a = np.array(flow_scenarios[i])
-        scenario_b = np.array(flow_scenarios[i+1])
+        scenario_b = np.array(flow_scenarios[i + 1])
 
         if len(scenario_a) > len(scenario_b):
             scenario_b.resize((1, len(scenario_a)))
@@ -48,7 +48,8 @@ def compare_scenarios(flow_scenarios):
 
         for (function_a, function_b) in zip(scenario_a, scenario_b):
             if function_a != 0 and function_b != 0:
-                if function_a["function_name"] != function_b["function_name"] or function_a["attributes"] != function_b["attributes"]:
+                if function_a["function_name"] != function_b["function_name"] or function_a["attributes"] != function_b[
+                    "attributes"]:
                     differ_num = function_a["order"]
                     break
             else:
@@ -76,7 +77,7 @@ def run_methods_from_scenario(flow_scenario, signal):
 
 # Function for running all scenarios on created signals from file
 # - first argument is all flow scenarios
-    # (list of tuples, where first value is name of flow and second value is list of methods to run)
+# (list of tuples, where first value is name of flow and second value is list of methods to run)
 # - second argument is name of .csv file placed in /signals dictionary
 def process_scenarios(tup_scenarios, signalFileName):
     signals = {}
@@ -89,7 +90,7 @@ def process_scenarios(tup_scenarios, signalFileName):
 
 # Test function for drawing all signals from signals dictionary
 # - first argument is a dictionary with signals,
-    # where the key is name of flow and value is the signal received from its flow
+# where the key is name of flow and value is the signal received from its flow
 def draw_all_signals(signals):
     for (signal, flow_name) in list(zip(signals.values(), signals.keys())):
         signal.draw_plot(flow_name, 'Decimated GSR signal', 'GSR value', 'TimeStamp')
@@ -97,7 +98,7 @@ def draw_all_signals(signals):
 
 # Signals are stored in a dictionary, where  key is a name of flow and value is a received signal from processing flow
 # Scenarios are loaded from .json file as list of tuples
-    # where first element of tuple is name of flow and second element is list of preprocessing methods
+# where first element of tuple is name of flow and second element is list of preprocessing methods
 def main():
     tup_scenarios = load_config_file("./config.json")
     sort_methods_by_order([x[1] for x in tup_scenarios])
@@ -107,6 +108,7 @@ def main():
     signals = process_scenarios(tup_scenarios, 'rawGSR')
     print([x.signalSamples for x in signals.values()])
     draw_all_signals(signals)
+    print("First scenario:", signals["flow_1"].features)
 
 
 if __name__ == "__main__":
