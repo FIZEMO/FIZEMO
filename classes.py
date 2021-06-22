@@ -57,6 +57,7 @@ class Signal:
 
     # Function to extract mean value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def mean(self, attr):
         value = np.mean(self.get_values())
         if not attr:
@@ -66,6 +67,7 @@ class Signal:
 
     # Function to extract median value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def median(self, attr):
         value = np.median(self.get_values())
         if not attr:
@@ -75,6 +77,7 @@ class Signal:
 
     # Function to extract standard deviation value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def standard_deviation(self, attr):
         value = np.std(self.get_values())
         if not attr:
@@ -84,6 +87,7 @@ class Signal:
 
     # Function to extract minimum value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def minimum(self, attr):
         value = np.min(self.get_values())
         if not attr:
@@ -93,6 +97,7 @@ class Signal:
 
     # Function to extract maximum value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def maximum(self, attr):
         value = np.max(self.get_values())
         if not attr:
@@ -102,6 +107,7 @@ class Signal:
 
     # Function to extract variance value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def variance(self, attr):
         value = np.var(self.get_values())
         if not attr:
@@ -111,6 +117,7 @@ class Signal:
 
     # Function to extract kurtosis value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def kurtosis(self, attr):
         value = stat.kurtosis(self.get_values())
         if not attr:
@@ -120,6 +127,7 @@ class Signal:
 
     # Function to extract kurtosis value from the signal
     # After being extracted values are being saved to the features list.
+    # - first argument is an optional output label name
     def skewness(self, attr):
         value = stat.skew(self.get_values())
         if not attr:
