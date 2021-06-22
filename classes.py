@@ -28,6 +28,19 @@ class Signal:
         ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
         self.signalSamples = ss.decimate(self.signalSamples, ratio, 8, axis=0)
 
+    # Function for signal decimation
+    # - first argument is dictionary with attributes, where:
+    # "samplingFrequency" is frequency with which signal was sampled
+    # "goalFrequency" is goal frequency with which signal should be sampled
+    def z_normalize(self):
+        mean = np.mean(self.get_values())
+        variance = np.var(self.get_values())
+
+        for i, (timestamps, values) in enumerate(self.signalSamples):
+            values = (values - mean)/variance
+            self.signalSamples[i][1] = values
+
+
     # Function to draw plot from given data
     # - first argument is a name of the window
     # - second argument is a title of the plot
