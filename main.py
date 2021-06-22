@@ -72,11 +72,15 @@ def compare_scenarios(flow_scenarios):
 def run_methods_from_scenario(flow_scenario, signal):
     for method in flow_scenario:
         fun = getattr(signal, method["function_name"])
-        fun(method["attributes"])
+        if method.get("attributes") is None:
+            fun()
+        else:
+            fun(method["attributes"])
 
 
 # Function for running all scenarios on created signals from file
 # - first argument is all flow scenarios
+# Key is name of scenario: scenario[0] and value is processed created signal: scenario[1]
 # (list of tuples, where first value is name of flow and second value is list of methods to run)
 # - second argument is name of .csv file placed in /signals dictionary
 def process_scenarios(tup_scenarios, signalFileName):
@@ -109,6 +113,8 @@ def main():
     print([x.signalSamples for x in signals.values()])
     draw_all_signals(signals)
     print("First scenario:", signals["flow_1"].features)
+    print("Second scenario:", signals["flow_2"].features)
+    print("Third scenario:", signals["flow_3"].features)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,6 @@ import scipy.stats as stat
 #  - features: two-dimensions list with extracted features [[name of the feature, value]]
 
 class Signal:
-    features = list()
 
     # Initialization of signal object
     #   Loading signal from .csv file and save it as signalSamples property
@@ -19,6 +18,7 @@ class Signal:
         path = './signals/' + fileName + '.csv'
         pandasDataFramedSignal = pd.read_csv(r'' + path)
         self.signalSamples = pandasDataFramedSignal.to_numpy()
+        self.features = []
 
     # Function for signal decimation
     # - first argument is dictionary with attributes, where:
@@ -44,49 +44,49 @@ class Signal:
 
     # Function to extract mean value from the signal
     # After being extracted values are being saved to the features list.
-    def mean(self, temporary):
+    def mean(self):
         value = np.mean(self.get_values())
         self.features.append(["Mean:", value])
 
     # Function to extract median value from the signal
     # After being extracted values are being saved to the features list.
-    def median(self, temporary):
+    def median(self):
         value = np.median(self.get_values())
         self.features.append(["Median:", value])
 
     # Function to extract standard deviation value from the signal
     # After being extracted values are being saved to the features list.
-    def standard_deviation(self, temporary):
+    def standard_deviation(self):
         value = np.std(self.get_values())
         self.features.append(["Standard deviation:", value])
 
     # Function to extract minimum value from the signal
     # After being extracted values are being saved to the features list.
-    def minimum(self, temporary):
+    def minimum(self):
         value = np.min(self.get_values())
         self.features.append(["Minimum:", value])
 
     # Function to extract maximum value from the signal
     # After being extracted values are being saved to the features list.
-    def maximum(self, temporary):
+    def maximum(self):
         value = np.max(self.get_values())
         self.features.append(["Maximum:", value])
 
     # Function to extract variance value from the signal
     # After being extracted values are being saved to the features list.
-    def variance(self, temporary):
+    def variance(self):
         value = np.var(self.get_values())
         self.features.append(["Variance:", value])
 
     # Function to extract kurtosis value from the signal
     # After being extracted values are being saved to the features list.
-    def kurtosis(self, temporary):
+    def kurtosis(self):
         value = stat.kurtosis(self.get_values())
         self.features.append(["Kurtosis:", value])
 
     # Function to extract kurtosis value from the signal
     # After being extracted values are being saved to the features list.
-    def skewness(self, temporary):
+    def skewness(self):
         value = stat.skew(self.get_values())
         self.features.append(["Skewness:", value])
 
@@ -97,6 +97,5 @@ class Signal:
         values = list()
         for iterator in range(len(self.signalSamples)):
             values.append(self.signalSamples[iterator][1])
-
 
         return values
