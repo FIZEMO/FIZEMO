@@ -18,35 +18,43 @@
     },
       {
       "function_name": "mean",
-      "order": 3
+      "order": 3,
+      "output_label": "sredniawka"
     },
     {
       "function_name": "median",
-      "order": 4
+      "order": 4,
+      "output_label": "medianka"
     },
     {
       "function_name": "standard_deviation",
-      "order": 5
+      "order": 5,
+      "output_label": "odchylonko"
     },
     {
       "function_name": "kurtosis",
-      "order": 7
+      "order": 7,
+      "output_label": "skrzywionko"
     },
      {
       "function_name": "skewness",
-      "order": 6
+      "order": 6,
+      "output_label": "skosnosc"
     },
     {
       "function_name": "variance",
-      "order": 8
+      "order": 8,
+      "output_label": "wariat"
     },
     {
       "function_name": "minimum",
-      "order": 10
+      "order": 10,
+      "output_label": "minimal"
     },
     {
       "function_name": "maximum",
-      "order": 9
+      "order": 9,
+      "output_label": "maximal"
     }
   ],
   "flow_2": [
@@ -64,11 +72,13 @@
     },
     {
       "function_name": "maximum",
-      "order": 3
+      "order": 3,
+      "output_label": ""
     },
     {
       "function_name": "minimum",
-      "order": 4
+      "order": 4,
+      "output_label": "minimal"
     }
   ],
   "flow_3": [
@@ -79,10 +89,6 @@
         "samplingFrequency": 128,
         "goalFrequency": 10
       }
-    },
-    {
-      "function_name": "minimum",
-      "order": 2
     }
   ]
 }
