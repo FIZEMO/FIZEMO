@@ -21,3 +21,8 @@
     Attributes:
         "samplingFrequency" - frequency with which signal was sampled (integer - [Hz])
         "goalFrequency" - goal frequency with which signal should be sampled (integer - [Hz])
+
+    [Z NORMALIZATION]
+    Description:  process of normalizing signal with algorithm Z
+    Function name: "z_normalize"
+    Attributes: None

@@ -55,12 +55,20 @@
       "order": 1,
       "attributes": {
         "samplingFrequency": 128,
-        "goalFrequency": 64
+        "goalFrequency": 10
       }
     },
     {
+      "function_name": "z_normalize",
+      "order": 2
+    },
+    {
       "function_name": "maximum",
-      "order": 9
+      "order": 3
+    },
+    {
+      "function_name": "minimum",
+      "order": 4
     }
   ],
   "flow_3": [
