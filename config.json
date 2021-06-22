@@ -1,0 +1,80 @@
+{
+  "flow_1": [
+    {
+      "function_name": "decimate",
+      "order": 2,
+      "attributes": {
+        "samplingFrequency": 50,
+        "goalFrequency": 10
+      }
+    },
+    {
+      "function_name": "decimate",
+      "order": 1,
+      "attributes": {
+        "samplingFrequency": 128,
+        "goalFrequency": 50
+      }
+    },
+      {
+      "function_name": "mean",
+      "order": 3
+    },
+    {
+      "function_name": "median",
+      "order": 4
+    },
+    {
+      "function_name": "standard_deviation",
+      "order": 5
+    },
+    {
+      "function_name": "kurtosis",
+      "order": 7
+    },
+     {
+      "function_name": "skewness",
+      "order": 6
+    },
+    {
+      "function_name": "variance",
+      "order": 8
+    },
+    {
+      "function_name": "minimum",
+      "order": 10
+    },
+    {
+      "function_name": "maximum",
+      "order": 9
+    }
+  ],
+  "flow_2": [
+    {
+      "function_name": "decimate",
+      "order": 1,
+      "attributes": {
+        "samplingFrequency": 128,
+        "goalFrequency": 64
+      }
+    },
+    {
+      "function_name": "maximum",
+      "order": 9
+    }
+  ],
+  "flow_3": [
+    {
+      "function_name": "decimate",
+      "order": 1,
+      "attributes": {
+        "samplingFrequency": 128,
+        "goalFrequency": 10
+      }
+    },
+    {
+      "function_name": "minimum",
+      "order": 2
+    }
+  ]
+}

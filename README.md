@@ -2,9 +2,9 @@
 
 ## Projekt badawczy tworzony przez 
 
-  Kasie Kaczorowską
+  Kasię Kaczorowską 
 
-   Karolinę Bednarską
+  Karolinę Bednarską
 
   Macieja Szarzeckiego 
 
@@ -27,3 +27,6 @@
   * pandas
 
     `conda install numpy`
+  * stat
+    
+    `pip install pypi-stat`
