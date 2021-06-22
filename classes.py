@@ -57,51 +57,75 @@ class Signal:
 
     # Function to extract mean value from the signal
     # After being extracted values are being saved to the features list.
-    def mean(self):
+    def mean(self, attr):
         value = np.mean(self.get_values())
-        self.features.append(["Mean:", value])
+        if not attr:
+            self.features.append(["Mean", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract median value from the signal
     # After being extracted values are being saved to the features list.
-    def median(self):
+    def median(self, attr):
         value = np.median(self.get_values())
-        self.features.append(["Median:", value])
+        if not attr:
+            self.features.append(["Median", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract standard deviation value from the signal
     # After being extracted values are being saved to the features list.
-    def standard_deviation(self):
+    def standard_deviation(self, attr):
         value = np.std(self.get_values())
-        self.features.append(["Standard deviation:", value])
+        if not attr:
+            self.features.append(["Standard_deviation", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract minimum value from the signal
     # After being extracted values are being saved to the features list.
-    def minimum(self):
+    def minimum(self, attr):
         value = np.min(self.get_values())
-        self.features.append(["Minimum:", value])
+        if not attr:
+            self.features.append(["Minimum", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract maximum value from the signal
     # After being extracted values are being saved to the features list.
-    def maximum(self):
+    def maximum(self, attr):
         value = np.max(self.get_values())
-        self.features.append(["Maximum:", value])
+        if not attr:
+            self.features.append(["Maximum", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract variance value from the signal
     # After being extracted values are being saved to the features list.
-    def variance(self):
+    def variance(self, attr):
         value = np.var(self.get_values())
-        self.features.append(["Variance:", value])
+        if not attr:
+            self.features.append(["Variance", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract kurtosis value from the signal
     # After being extracted values are being saved to the features list.
-    def kurtosis(self):
+    def kurtosis(self, attr):
         value = stat.kurtosis(self.get_values())
-        self.features.append(["Kurtosis:", value])
+        if not attr:
+            self.features.append(["Kurtosis", value])
+        else:
+            self.features.append([attr, value])
 
     # Function to extract kurtosis value from the signal
     # After being extracted values are being saved to the features list.
-    def skewness(self):
+    def skewness(self, attr):
         value = stat.skew(self.get_values())
-        self.features.append(["Skewness:", value])
+        if not attr:
+            self.features.append(["Skewness", value])
+        else:
+            self.features.append([attr, value])
 
     # Support function to get values out of a sampled signal
     # Since signal is made out of time stamps and corresponding values

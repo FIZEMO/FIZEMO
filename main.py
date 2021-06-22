@@ -2,6 +2,8 @@ import json
 import numpy as np
 from operator import itemgetter
 import classes
+import csv
+from datetime import datetime
 
 
 # Function for loading a json configuration file
@@ -72,10 +74,20 @@ def compare_scenarios(flow_scenarios):
 def run_methods_from_scenario(flow_scenario, signal):
     for method in flow_scenario:
         fun = getattr(signal, method["function_name"])
-        if method.get("attributes") is None:
+        if method.get("attributes") is None and method.get("output_label") is None:
             fun()
-        else:
+        elif method.get("output_label") is None:
             fun(method["attributes"])
+        else:
+            fun(method["output_label"])
+
+
+def write_csv(signal, scenario, date):
+    if signal.features.__len__() > 0:
+        with open("./results/" + scenario + " " + date + ".csv", 'w', newline='') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            for element in signal.features:
+                csvwriter.writerow(element)
 
 
 # Function for running all scenarios on created signals from file
@@ -83,12 +95,13 @@ def run_methods_from_scenario(flow_scenario, signal):
 # Key is name of scenario: scenario[0] and value is processed created signal: scenario[1]
 # (list of tuples, where first value is name of flow and second value is list of methods to run)
 # - second argument is name of .csv file placed in /signals dictionary
-def process_scenarios(tup_scenarios, signalFileName):
+def process_scenarios(tup_scenarios, signalFileName, date):
     signals = {}
     for scenario in tup_scenarios:
         signal = classes.Signal(signalFileName)
         run_methods_from_scenario(scenario[1], signal)
         signals[scenario[0]] = signal
+        write_csv(signal, scenario[0], date)
     return signals
 
 
@@ -104,16 +117,19 @@ def draw_all_signals(signals):
 # Scenarios are loaded from .json file as list of tuples
 # where first element of tuple is name of flow and second element is list of preprocessing methods
 def main():
+    date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
     tup_scenarios = load_config_file("./config.json")
+
     sort_methods_by_order([x[1] for x in tup_scenarios])
     #differ_positions = compare_scenarios([x[1] for x in tup_scenarios])
     print("Next scenarios differ in positions: ")
     #print(differ_positions)
-    signals = process_scenarios(tup_scenarios, 'rawGSR')
+    signals = process_scenarios(tup_scenarios, 'rawGSR', date)
     draw_all_signals(signals)
     print("First scenario:", signals["flow_1"].features)
     print("Second scenario:", signals["flow_2"].features)
     print("Third scenario:", signals["flow_3"].features)
+    print(signals["flow_1"].features[1])
 
 
 if __name__ == "__main__":
