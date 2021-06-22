@@ -50,8 +50,7 @@ def compare_scenarios(flow_scenarios):
 
         for (function_a, function_b) in zip(scenario_a, scenario_b):
             if function_a != 0 and function_b != 0:
-                if function_a["function_name"] != function_b["function_name"] or function_a["attributes"] != function_b[
-                    "attributes"]:
+                if function_a["function_name"] != function_b["function_name"] or function_a["attributes"] != function_b["attributes"]:
                     differ_num = function_a["order"]
                     break
             else:
@@ -81,7 +80,10 @@ def run_methods_from_scenario(flow_scenario, signal):
         else:
             fun(method["output_label"])
 
-
+# Function for writing extracted features to csv file
+# - first argument is signal which features are related to
+# - second argument is name of scenario
+# - third argument is datetime
 def write_csv(signal, scenario, date):
     if signal.features.__len__() > 0:
         with open("./results/" + scenario + " " + date + ".csv", 'w', newline='') as csvfile:
@@ -117,6 +119,7 @@ def draw_all_signals(signals):
 # Scenarios are loaded from .json file as list of tuples
 # where first element of tuple is name of flow and second element is list of preprocessing methods
 def main():
+    # get datetime
     date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
     tup_scenarios = load_config_file("./config.json")
 
@@ -129,7 +132,6 @@ def main():
     print("First scenario:", signals["flow_1"].features)
     print("Second scenario:", signals["flow_2"].features)
     print("Third scenario:", signals["flow_3"].features)
-    print(signals["flow_1"].features[1])
 
 
 if __name__ == "__main__":
