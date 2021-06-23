@@ -81,7 +81,7 @@ class Signal:
     def standard_deviation(self, attr):
         value = np.std(self.get_values())
         if not attr:
-            self.features.append(["Standard_deviation", value])
+            self.features.append(["Standard deviation", value])
         else:
             self.features.append([attr, value])
 

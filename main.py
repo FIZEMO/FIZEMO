@@ -124,9 +124,7 @@ def main():
     tup_scenarios = load_config_file("./config.json")
 
     sort_methods_by_order([x[1] for x in tup_scenarios])
-    #differ_positions = compare_scenarios([x[1] for x in tup_scenarios])
     print("Next scenarios differ in positions: ")
-    #print(differ_positions)
     signals = process_scenarios(tup_scenarios, 'rawGSR', date)
     draw_all_signals(signals)
     print("First scenario:", signals["flow_1"].features)
