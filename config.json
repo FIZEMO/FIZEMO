@@ -19,42 +19,42 @@
       {
       "function_name": "mean",
       "order": 3,
-      "output_label": "sredniawka"
+      "output_label": "Średnia"
     },
     {
       "function_name": "median",
       "order": 4,
-      "output_label": "medianka"
+      "output_label": "Mediana"
     },
     {
       "function_name": "standard_deviation",
       "order": 5,
-      "output_label": "odchylonko"
+      "output_label": "Odchylenie standardowe"
     },
     {
       "function_name": "kurtosis",
       "order": 7,
-      "output_label": "skrzywionko"
+      "output_label": "Skrzywienie"
     },
      {
       "function_name": "skewness",
       "order": 6,
-      "output_label": "skosnosc"
+      "output_label": "Skośność"
     },
     {
       "function_name": "variance",
       "order": 8,
-      "output_label": "wariat"
+      "output_label": "Wariancja"
     },
     {
       "function_name": "minimum",
       "order": 10,
-      "output_label": "minimal"
+      "output_label": "Minimalna"
     },
     {
       "function_name": "maximum",
       "order": 9,
-      "output_label": "maximal"
+      "output_label": ""
     }
   ],
   "flow_2": [
