@@ -5,6 +5,13 @@
     For each method there is a special name and attributes names that must be used and signed in configuration file.
     For each feature extraction there is a special name that must be used and signed in configuration file.
 
+    This program gives complete freedom to the user so he can create many processing scenarios,
+    and each of them can be given any name, what is more in each scenario many processing methods can be used in any order,
+    and one processing method can be used more than once during one scenario.
+
+    If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
+    and I'm sure things will lighten up.
+
 2. METHOD STRUCTURE
     To call function for processing signal in configuration file one has to fill 3 elements:
     "function_name": ...,
