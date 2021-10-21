@@ -12,7 +12,16 @@
     If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
     and I'm sure things will lighten up.
 
-2. METHOD STRUCTURE
+2. SCENARIO STRUCTURE
+    Each scenario defined in configuration file has a special structure. It has to contain three elements:
+    a. "signalFileName" - a string representing the name of the file with signal which is placed in ./signals catalog
+    b. "signalType" - type of processed signal, it has to be choosen from list of available types of signal (manual.txt, point 3.)
+    c. "methods" - list of methods for signal processing or feature extraction
+
+3. AVAILABLE TYPES OF SIGNAL
+    a. GSR (Galvanic Skin Response)
+
+4. METHOD STRUCTURE
     To call function for processing signal in configuration file one has to fill 3 elements:
     "function_name": "...",
     "order": ...,
@@ -23,7 +32,7 @@
     *** attributes - attributes that are unique for each function; they specify function parameters;
         For some function this element might be omitted (look at [Z NORMALIZATION] function).
 
-3. AVAILABLE FUNCTIONS
+5. AVAILABLE FUNCTIONS
 
     [DECIMATION]
     Description:  process of bandwidth reduction (filtering) and sample-rate reduction
@@ -37,7 +46,7 @@
     Function name: "z_normalize"
     Attributes: None
 
-4. FEATURE EXTRACTION STRUCTURE
+6. FEATURE EXTRACTION STRUCTURE
     To call function for feature extraction from the signal in configuration file one has to fill 3 elements:
     "function_name": "...",
     "order": ...,
@@ -48,7 +57,7 @@
     *** (optional) output_label - optional elements where user can define label for extracted feature. (string)
         If this element is omitted, program will generate default output label for a feature.
 
-5. AVAILABLE FUNCTIONS FOR FEATURE EXTRACTION
+7. AVAILABLE FUNCTIONS FOR FEATURE EXTRACTION
     [MEAN]
     Description: Function to extract mean value from the signal
     Function name: "mean"

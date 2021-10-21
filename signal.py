@@ -8,15 +8,19 @@ import scipy.stats as stat
 # Class for main signal
 #  - signalSamples: two-dimensions list with signal [[timestamps, values]]
 #  - features: two-dimensions list with extracted features [[name of the feature, value]]
+#  - signalType: type of processed signal
+#    (it has to be included in the list of available types of the signal (manual.txt))
 
 class Signal:
 
     # Initialization of signal object
     #   Loading signal from .csv file and save it as signalSamples property
-    #       - first argument name of the .csv file placed in folder ./signals
-    def __init__(self, fileName):
+    #       - first argument is name of the .csv file placed in folder ./signals
+    #       - second argument is type of signal to process
+    def __init__(self, fileName, signalType):
         path = './signals/' + fileName + '.csv'
         pandasDataFramedSignal = pd.read_csv(r'' + path)
+        self.signalType = signalType
         self.signalSamples = pandasDataFramedSignal.to_numpy()
         self.features = []
 
@@ -37,9 +41,8 @@ class Signal:
         variance = np.var(self.get_values())
 
         for i, (timestamps, values) in enumerate(self.signalSamples):
-            values = (values - mean)/variance
+            values = (values - mean) / variance
             self.signalSamples[i][1] = values
-
 
     # Function to draw plot from given data
     # - first argument is a name of the window

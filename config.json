@@ -1,94 +1,112 @@
 {
   "flow_1": [
     {
-      "function_name": "decimate",
-      "order": 2,
-      "attributes": {
-        "samplingFrequency": 50,
-        "goalFrequency": 10
-      }
-    },
-    {
-      "function_name": "decimate",
-      "order": 1,
-      "attributes": {
-        "samplingFrequency": 128,
-        "goalFrequency": 50
-      }
-    },
-      {
-      "function_name": "mean",
-      "order": 3,
-      "output_label": "Średnia"
-    },
-    {
-      "function_name": "median",
-      "order": 4,
-      "output_label": "Mediana"
-    },
-    {
-      "function_name": "standard_deviation",
-      "order": 5,
-      "output_label": "Odchylenie standardowe"
-    },
-    {
-      "function_name": "kurtosis",
-      "order": 7,
-      "output_label": "Skrzywienie"
-    },
-     {
-      "function_name": "skewness",
-      "order": 6,
-      "output_label": "Skośność"
-    },
-    {
-      "function_name": "variance",
-      "order": 8,
-      "output_label": "Wariancja"
-    },
-    {
-      "function_name": "minimum",
-      "order": 10,
-      "output_label": "Minimalna"
-    },
-    {
-      "function_name": "maximum",
-      "order": 9,
-      "output_label": ""
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
+      "methods": [
+        {
+          "function_name": "decimate",
+          "order": 2,
+          "attributes": {
+            "samplingFrequency": 50,
+            "goalFrequency": 10
+          }
+        },
+        {
+          "function_name": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 50
+          }
+        },
+        {
+          "function_name": "mean",
+          "order": 3,
+          "output_label": "Średnia"
+        },
+        {
+          "function_name": "median",
+          "order": 4,
+          "output_label": "Mediana"
+        },
+        {
+          "function_name": "standard_deviation",
+          "order": 5,
+          "output_label": "Odchylenie standardowe"
+        },
+        {
+          "function_name": "kurtosis",
+          "order": 7,
+          "output_label": "Skrzywienie"
+        },
+        {
+          "function_name": "skewness",
+          "order": 6,
+          "output_label": "Skośność"
+        },
+        {
+          "function_name": "variance",
+          "order": 8,
+          "output_label": "Wariancja"
+        },
+        {
+          "function_name": "minimum",
+          "order": 10,
+          "output_label": "Minimalna"
+        },
+        {
+          "function_name": "maximum",
+          "order": 9,
+          "output_label": ""
+        }
+      ]
     }
   ],
   "flow_2": [
     {
-      "function_name": "decimate",
-      "order": 1,
-      "attributes": {
-        "samplingFrequency": 128,
-        "goalFrequency": 10
-      }
-    },
-    {
-      "function_name": "z_normalize",
-      "order": 2
-    },
-    {
-      "function_name": "maximum",
-      "order": 3,
-      "output_label": ""
-    },
-    {
-      "function_name": "minimum",
-      "order": 4,
-      "output_label": "minimal"
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
+      "methods": [
+        {
+          "function_name": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 10
+          }
+        },
+        {
+          "function_name": "z_normalize",
+          "order": 2
+        },
+        {
+          "function_name": "maximum",
+          "order": 3,
+          "output_label": ""
+        },
+        {
+          "function_name": "minimum",
+          "order": 4,
+          "output_label": "minimal"
+        }
+      ]
     }
   ],
   "flow_3": [
     {
-      "function_name": "decimate",
-      "order": 1,
-      "attributes": {
-        "samplingFrequency": 128,
-        "goalFrequency": 10
-      }
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
+      "methods": [
+        {
+          "function_name": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 10
+          }
+        }
+      ]
     }
   ]
 }

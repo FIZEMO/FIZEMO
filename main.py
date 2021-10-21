@@ -1,135 +1,65 @@
 import json
-import numpy as np
-from operator import itemgetter
-import classes
-import csv
-from datetime import datetime
+from scenario import Scenario
+
+SCENARIO_NAME = 0
+DICTIONARY = 1
 
 
 # Function for loading a json configuration file
-# Returns list of tuples, where first parameter is name of scenario, second parameter is list of methods
+# Returns list of tuples, where first parameter is name of scenario (SCENARIO_NAME),
+# second parameter is an array with dictionary (DICTIONARY)
+# which contains: name of signal file, type of signal and list of processing methods
 # - first argument is path to configuration file
-
 def load_config_file(path):
     file = open(path)
     config = json.load(file)
     keys = config.keys()
     scenarios = []
     for flow in config:
-        scenarios.append(config[flow])
+        scenarios.append(config[flow][0])
 
     return list(zip(keys, scenarios))
 
 
-# Function for sorting methods in all scenarios by their order
-# - first argument is list of flows with methods
-def sort_methods_by_order(flow_scenarios):
-    for scenario in flow_scenarios:
-        scenario.sort(key=itemgetter('order'), reverse=False)
+# Function for converting tuple obtained from loading a json configuration file to list of Scenario objects
+# Returns list of Scenarios filled with data from JSON configuration file
+# - first argument is tuple with scenarios data returned from load_config_file()
+def convert_json_to_object_list(json_tup_scenarios_list):
+    scenarios = []
+    for scenario in json_tup_scenarios_list:
+        scenario_object = Scenario(scenario[SCENARIO_NAME],
+                                   scenario[DICTIONARY]["signalFileName"],
+                                   scenario[DICTIONARY]["signalType"],
+                                   scenario[DICTIONARY]["methods"])
+        scenarios.append(scenario_object)
+    return scenarios
 
 
-# Returns the list of numbers, which indicates on which position next scenarios differes
-# For example if scenario 1 and scenario 2 have two the same processing methods at the beggining of flow
-# and then they differs, and scenario 2 and scenario 3 have three the same processing methods at the beggining of flow
-# and then they differs, it returns list: [2, 3]
-# If whole processing for two scenarios are the same it returns -1
-
-def compare_scenarios(flow_scenarios):
-    list_of_differ_positions = []
-
-    for i in range(len(flow_scenarios) - 1):
-        scenario_a = np.array(flow_scenarios[i])
-        scenario_b = np.array(flow_scenarios[i + 1])
-
-        if len(scenario_a) > len(scenario_b):
-            scenario_b.resize((1, len(scenario_a)))
-            scenario_b = np.squeeze(scenario_b)
-        elif len(scenario_a) < len(scenario_b):
-            scenario_a = scenario_a.resize((1, len(scenario_b)))
-            scenario_a = np.squeeze(scenario_a)
-
-        for (function_a, function_b) in zip(scenario_a, scenario_b):
-            if function_a != 0 and function_b != 0:
-                if function_a["function_name"] != function_b["function_name"] or function_a["attributes"] != function_b["attributes"]:
-                    differ_num = function_a["order"]
-                    break
-            else:
-                if function_a != 0:
-                    differ_num = function_a["order"]
-                else:
-                    differ_num = function_b["order"]
-                break
-
-            differ_num = -1
-
-        list_of_differ_positions.append(differ_num)
-
-    return list_of_differ_positions
+# Function for running all scenarios
+# - first argument is all flow scenarios (list of Scenario's objects)
+def process_scenarios(scenarios):
+    for scenario in scenarios:
+        scenario.process_methods()
+        scenario.write_csv()
 
 
-# Function for processing all methods in one flow scenario
-# - first argument is flow scenario (not tuple, only methods)
-# - second argument is signal which should be processed
-def run_methods_from_scenario(flow_scenario, signal):
-    for method in flow_scenario:
-        fun = getattr(signal, method["function_name"])
-        if method.get("attributes") is None and method.get("output_label") is None:
-            fun()
-        elif method.get("output_label") is None:
-            fun(method["attributes"])
-        else:
-            fun(method["output_label"])
-
-# Function for writing extracted features to csv file
-# - first argument is signal which features are related to
-# - second argument is name of scenario
-# - third argument is datetime
-def write_csv(signal, scenario, date):
-    if signal.features.__len__() > 0:
-        with open("./results/" + scenario + " " + date + ".csv", 'w', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile)
-            for element in signal.features:
-                csvwriter.writerow(element)
+# Test function for plotting all signals obtained from all scenarios
+# - first argument is a list of Scenarios,
+def draw_all_signals(scenarios):
+    for scenario in scenarios:
+        title = "Processed " + str(scenario.processedSignal.signalType) + " signal"
+        x = str(scenario.processedSignal.signalType) + " value"
+        scenario.processedSignal.draw_plot(scenario.scenarioName, title, x, 'TimeStamp')
 
 
-# Function for running all scenarios on created signals from file
-# - first argument is all flow scenarios
-# Key is name of scenario: scenario[0] and value is processed created signal: scenario[1]
-# (list of tuples, where first value is name of flow and second value is list of methods to run)
-# - second argument is name of .csv file placed in /signals dictionary
-def process_scenarios(tup_scenarios, signalFileName, date):
-    signals = {}
-    for scenario in tup_scenarios:
-        signal = classes.Signal(signalFileName)
-        run_methods_from_scenario(scenario[1], signal)
-        signals[scenario[0]] = signal
-        write_csv(signal, scenario[0], date)
-    return signals
-
-
-# Test function for drawing all signals from signals dictionary
-# - first argument is a dictionary with signals,
-# where the key is name of flow and value is the signal received from its flow
-def draw_all_signals(signals):
-    for (signal, flow_name) in list(zip(signals.values(), signals.keys())):
-        signal.draw_plot(flow_name, 'Decimated GSR signal', 'GSR value', 'TimeStamp')
-
-
-# Signals are stored in a dictionary, where  key is a name of flow and value is a received signal from processing flow
-# Scenarios are loaded from .json file as list of tuples
-# where first element of tuple is name of flow and second element is list of preprocessing methods
+# Scenarios are loaded from .json file as list of tuples, next converted into list of Scenario objects
+# Each Scenario has Signal object which is processed with methods described in configuration file
+# From each Scenario there is obtained a .csv file with extracted features
 def main():
-    # get datetime
-    date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
     tup_scenarios = load_config_file("./config.json")
-
-    sort_methods_by_order([x[1] for x in tup_scenarios])
-    print("Next scenarios differ in positions: ")
-    signals = process_scenarios(tup_scenarios, 'rawGSR', date)
-    draw_all_signals(signals)
-    print("First scenario:", signals["flow_1"].features)
-    print("Second scenario:", signals["flow_2"].features)
-    print("Third scenario:", signals["flow_3"].features)
+    scenarios = convert_json_to_object_list(tup_scenarios)
+    process_scenarios(scenarios)
+    draw_all_signals(scenarios)
 
 
 if __name__ == "__main__":
