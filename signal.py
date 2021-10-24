@@ -3,147 +3,258 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 import scipy.stats as stat
+from inspect import signature
 
-
-# Class for main signal
-#  - signalSamples: two-dimensions list with signal [[timestamps, values]]
-#  - features: two-dimensions list with extracted features [[name of the feature, value]]
-#  - signalType: type of processed signal
-#    (it has to be included in the list of available types of the signal (manual.txt))
 
 class Signal:
+    """
+            A class used to represent a signal
 
-    # Initialization of signal object
-    #   Loading signal from .csv file and save it as signalSamples property
-    #       - first argument is name of the .csv file placed in folder ./signals
-    #       - second argument is type of signal to process
-    def __init__(self, fileName, signalType):
-        path = './signals/' + fileName + '.csv'
-        pandasDataFramedSignal = pd.read_csv(r'' + path)
-        self.signalType = signalType
-        self.signalSamples = pandasDataFramedSignal.to_numpy()
+            ...
+
+            Attributes
+            ----------
+            signal_samples : [[]]
+                the two-dimensions list with signal [[timestamps, values]]
+            features : [[]]
+                the two-dimensions list with extracted features [[name of the feature, value]]
+            signal_type : str
+                the type of processed signal
+                it has to be included in the list of available types of the signal (manual.txt)
+
+            Methods
+            -------
+            decimate(attr)
+                Decimates the signal.
+            z_normalize()
+                Normalizes the signal.
+            draw_plot(window_name, title_name, x_name, y_name)
+                Plots the signal chart with specified names of window, title, x and y values.
+            mean(attr)
+                Extracts mean value from the signal.
+            median(attr)
+                Extracts median value from the signal.
+            standard_deviation(attr)
+                Extracts standard deviation value from the signal.
+            minimum(attr)
+                Extracts minimum value from the signal.
+            maximum(attr)
+                Extracts maximum value from the signal.
+            variance(attr)
+                Extracts variance value from the signal.
+            kurtosis(attr)
+                Extracts kurtosis value from the signal.
+            skewness(attr)
+                Extracts skewness value from the signal.
+            get_values()
+                Support method to get signal values out of a sampled signal.
+            """
+
+    def __init__(self, signal_file_name, signal_type):
+        """Initialization of the Signal object which include loading the signal from .csv file and
+            saving it as signal_samples property
+
+            Parameters
+           ----------
+           signal_file_name : str
+               The name of the file which contains signal data (placed in ./signals)
+           signal_type : str
+               type of signal
+               it has to be included in the list of available types of the signal (manual.txt)
+
+           """
+
+        path = './signals/' + signal_file_name + '.csv'
+        pandas_data_framed_signal = pd.read_csv(r'' + path)
+        self.signal_type = signal_type
+        self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.features = []
 
-    # Function for signal decimation
-    # - first argument is dictionary with attributes, where:
-    # "samplingFrequency" is frequency with which signal was sampled
-    # "goalFrequency" is goal frequency with which signal should be sampled
     def decimate(self, attr):
-        ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
-        self.signalSamples = ss.decimate(self.signalSamples, ratio, 8, axis=0)
+        """Decimates the signal
 
-    # Function for signal decimation
-    # - first argument is dictionary with attributes, where:
-    # "samplingFrequency" is frequency with which signal was sampled
-    # "goalFrequency" is goal frequency with which signal should be sampled
+           Parameters
+           ----------
+           attr : {}
+               The dictionary with attributes:
+               - "samplingFrequency" is frequency with which signal was sampled
+               - "goalFrequency" is goal frequency with which signal should be sampled
+
+           """
+
+        ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
+        self.signal_samples = ss.decimate(self.signal_samples, ratio, 8, axis=0)
+
     def z_normalize(self):
+        """Normalizes the signal."""
+
         mean = np.mean(self.get_values())
         variance = np.var(self.get_values())
 
-        for i, (timestamps, values) in enumerate(self.signalSamples):
+        for i, (timestamps, values) in enumerate(self.signal_samples):
             values = (values - mean) / variance
-            self.signalSamples[i][1] = values
+            self.signal_samples[i][1] = values
 
-    # Function to draw plot from given data
-    # - first argument is a name of the window
-    # - second argument is a title of the plot
-    # - third argument is a name of X axis
-    # - fourth argument is a name of Y axis
-    def draw_plot(self, windowName, titleName, xName, yName):
-        x_axis, y_axis = zip(*self.signalSamples)
-        plt.figure(windowName)
-        plt.title(titleName)
-        plt.xlabel(xName)
-        plt.ylabel(yName)
+    def draw_plot(self, window_name, title_name, x_name, y_name):
+        """Plots the signal chart with specified names of window, title, x and y values.
+
+           Parameters
+           ----------
+           window_name : str
+               The name of the chart window
+           title_name : str
+                The title of the chart
+           x_name : str
+                The x-axis name
+           y_name : str
+                The y-axis name
+           """
+        x_axis, y_axis = zip(*self.signal_samples)
+        plt.figure(window_name)
+        plt.title(title_name)
+        plt.xlabel(x_name)
+        plt.ylabel(y_name)
         plt.plot(x_axis, y_axis)
         plt.show()
 
-    # Function to extract mean value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def mean(self, attr):
+    def mean(self, attr="Mean"):
+        """Extracts the mean value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = np.mean(self.get_values())
         if not attr:
             self.features.append(["Mean", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract median value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def median(self, attr):
+    def median(self, attr="Median"):
+        """Extracts the median value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = np.median(self.get_values())
         if not attr:
             self.features.append(["Median", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract standard deviation value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def standard_deviation(self, attr):
+    def standard_deviation(self, attr="Standard deviation"):
+        """Extracts the standard deviation value from the signal. After being extracted,
+            values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = np.std(self.get_values())
         if not attr:
             self.features.append(["Standard deviation", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract minimum value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def minimum(self, attr):
+    def minimum(self, attr="Minimum"):
+        """Extracts the minimum value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = np.min(self.get_values())
         if not attr:
             self.features.append(["Minimum", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract maximum value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def maximum(self, attr):
+    def maximum(self, attr="Maximum"):
+        """Extracts the maximum value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = np.max(self.get_values())
         if not attr:
             self.features.append(["Maximum", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract variance value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def variance(self, attr):
+    def variance(self, attr="Variance"):
+        """Extracts the variance value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = np.var(self.get_values())
         if not attr:
             self.features.append(["Variance", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract kurtosis value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def kurtosis(self, attr):
+    def kurtosis(self, attr="Kurtosis"):
+        """Extracts the kurtosis value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
         value = stat.kurtosis(self.get_values())
         if not attr:
             self.features.append(["Kurtosis", value])
         else:
             self.features.append([attr, value])
 
-    # Function to extract kurtosis value from the signal
-    # After being extracted values are being saved to the features list.
-    # - first argument is an optional output label name
-    def skewness(self, attr):
+    def skewness(self, attr="Skewness"):
+        """Extracts the skewness value from the signal. After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
         value = stat.skew(self.get_values())
         if not attr:
             self.features.append(["Skewness", value])
         else:
             self.features.append([attr, value])
 
-    # Support function to get values out of a sampled signal
-    # Since signal is made out of time stamps and corresponding values
-    # sometimes we just want to use the values e.g: feature extraction
+    #
     def get_values(self):
+        """Support method to get values out of a sampled signal.
+            Since signal is made out of time stamps and corresponding values sometimes we just want to use the values
+            e.g: feature extraction.
+
+        """
+
         values = list()
-        for iterator in range(len(self.signalSamples)):
-            values.append(self.signalSamples[iterator][1])
+        for iterator in range(len(self.signal_samples)):
+            values.append(self.signal_samples[iterator][1])
 
         return values

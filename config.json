@@ -1,11 +1,11 @@
 {
-  "flow_1": [
+  "Scenariusz 1": [
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
       "methods": [
         {
-          "function_name": "decimate",
+          "functionName": "decimate",
           "order": 2,
           "attributes": {
             "samplingFrequency": 50,
@@ -13,7 +13,7 @@
           }
         },
         {
-          "function_name": "decimate",
+          "functionName": "decimate",
           "order": 1,
           "attributes": {
             "samplingFrequency": 128,
@@ -21,55 +21,55 @@
           }
         },
         {
-          "function_name": "mean",
+          "functionName": "mean",
           "order": 3,
-          "output_label": "Średnia"
+          "outputLabel": "Średnia"
         },
         {
-          "function_name": "median",
+          "functionName": "median",
           "order": 4,
-          "output_label": "Mediana"
+          "outputLabel": "Mediana"
         },
         {
-          "function_name": "standard_deviation",
+          "functionName": "standard_deviation",
           "order": 5,
-          "output_label": "Odchylenie standardowe"
+          "outputLabel": "Odchylenie standardowe"
         },
         {
-          "function_name": "kurtosis",
+          "functionName": "kurtosis",
           "order": 7,
-          "output_label": "Skrzywienie"
+          "outputLabel": "Skrzywienie"
         },
         {
-          "function_name": "skewness",
+          "functionName": "skewness",
           "order": 6,
-          "output_label": "Skośność"
+          "outputLabel": "Skośność"
         },
         {
-          "function_name": "variance",
+          "functionName": "variance",
           "order": 8,
-          "output_label": "Wariancja"
+          "outputLabel": "Wariancja"
         },
         {
-          "function_name": "minimum",
+          "functionName": "minimum",
           "order": 10,
-          "output_label": "Minimalna"
+          "outputLabel": "Minimalna"
         },
         {
-          "function_name": "maximum",
+          "functionName": "maximum",
           "order": 9,
-          "output_label": ""
+          "outputLabel": ""
         }
       ]
     }
   ],
-  "flow_2": [
+  "Scenariusz 2": [
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
       "methods": [
         {
-          "function_name": "decimate",
+          "functionName": "decimate",
           "order": 1,
           "attributes": {
             "samplingFrequency": 128,
@@ -77,29 +77,28 @@
           }
         },
         {
-          "function_name": "z_normalize",
+          "functionName": "z_normalize",
           "order": 2
         },
         {
-          "function_name": "maximum",
-          "order": 3,
-          "output_label": ""
+          "functionName": "maximum",
+          "order": 3
         },
         {
-          "function_name": "minimum",
+          "functionName": "minimum",
           "order": 4,
-          "output_label": "minimal"
+          "outputLabel": "minimal"
         }
       ]
     }
   ],
-  "flow_3": [
+  "Scenariusz 3": [
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
       "methods": [
         {
-          "function_name": "decimate",
+          "functionName": "decimate",
           "order": 1,
           "attributes": {
             "samplingFrequency": 128,

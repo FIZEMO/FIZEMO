@@ -1,30 +1,59 @@
 import json
 from scenario import Scenario
 
+""" 
+    Defined variables used for distinguishing values obtained from JSON tuple:
+    
+    SCENARIO_NAME (str) : the name of the scenario
+    DICTIONARY ({}) : dictionary with all scenario's parameters
+"""
+
 SCENARIO_NAME = 0
 DICTIONARY = 1
 
 
-# Function for loading a json configuration file
-# Returns list of tuples, where first parameter is name of scenario (SCENARIO_NAME),
-# second parameter is an array with dictionary (DICTIONARY)
-# which contains: name of signal file, type of signal and list of processing methods
-# - first argument is path to configuration file
 def load_config_file(path):
+    """Loads the JSON configuration file
+
+        Parameters
+        ----------
+        path : str
+            The path to the JSON configuration file
+
+        Returns
+        -------
+        list of tuples
+            a list of tuples, where first parameter is the name of the scenario (SCENARIO_NAME)
+            and second parameter is a dictionary with scenario's attributes (DICTIONARY)
+        """
+
     file = open(path)
     config = json.load(file)
     keys = config.keys()
     scenarios = []
     for flow in config:
+        # config is a dictionary, where the key is the name of the scenario
+        # and value is an array with one element - dictionary with scenario's attributes
         scenarios.append(config[flow][0])
 
     return list(zip(keys, scenarios))
 
 
-# Function for converting tuple obtained from loading a json configuration file to list of Scenario objects
-# Returns list of Scenarios filled with data from JSON configuration file
-# - first argument is tuple with scenarios data returned from load_config_file()
 def convert_json_to_object_list(json_tup_scenarios_list):
+    """Converts tuple obtained from loading a json configuration file to list of Scenario objects
+
+        Parameters
+        ----------
+        json_tup_scenarios_list : []
+            The list of tuples, where the first element in each tuple is the scenario name (SCENARIO_NAME)
+            and second element is a dictionary with scenario's attributes
+
+        Returns
+        -------
+        list of scenarios
+            a list of Scenario objects filled with data obtained from JSON configuration file
+        """
+
     scenarios = []
     for scenario in json_tup_scenarios_list:
         scenario_object = Scenario(scenario[SCENARIO_NAME],
@@ -35,27 +64,47 @@ def convert_json_to_object_list(json_tup_scenarios_list):
     return scenarios
 
 
-# Function for running all scenarios
-# - first argument is all flow scenarios (list of Scenario's objects)
 def process_scenarios(scenarios):
+    """Runs all scenarios
+
+        Parameters
+        ----------
+        scenarios : []
+            The list of Scenario's objects which should be run (all flow scenarios)
+
+        """
+
     for scenario in scenarios:
         scenario.process_methods()
         scenario.write_csv()
 
 
-# Test function for plotting all signals obtained from all scenarios
-# - first argument is a list of Scenarios,
 def draw_all_signals(scenarios):
+    """Test method for plotting all signals obtained from all scenarios
+
+        Parameters
+        ----------
+        scenarios : []
+            The list of Scenario's objects which contain signals to be plotted
+
+        """
+
     for scenario in scenarios:
-        title = "Processed " + str(scenario.processedSignal.signalType) + " signal"
-        x = str(scenario.processedSignal.signalType) + " value"
-        scenario.processedSignal.draw_plot(scenario.scenarioName, title, x, 'TimeStamp')
+        title = "Processed " + str(scenario.processed_signal.signal_type) + " signal"
+        x = str(scenario.processed_signal.signal_type) + " value"
+        scenario.processed_signal.draw_plot(scenario.scenario_name, title, x, 'TimeStamp')
 
 
-# Scenarios are loaded from .json file as list of tuples, next converted into list of Scenario objects
-# Each Scenario has Signal object which is processed with methods described in configuration file
-# From each Scenario there is obtained a .csv file with extracted features
+#
 def main():
+    """MAIN SCRIPT
+
+        Scenarios are loaded from .json file as list of tuples, next converted into list of Scenario objects.
+        Each Scenario has Signal object which is processed with methods described in the configuration file.
+        From each Scenario there is obtained a result .csv file with extracted features.
+
+    """
+
     tup_scenarios = load_config_file("./config.json")
     scenarios = convert_json_to_object_list(tup_scenarios)
     process_scenarios(scenarios)
