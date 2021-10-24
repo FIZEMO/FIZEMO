@@ -4,7 +4,7 @@ from signal import Signal
 from operator import itemgetter
 
 
-# Class for one scenario
+# Class for a single scenario
 #  - scenarioName - name of the scenario taken from JSON configuration file
 #  - signalName - name of the file which contains the base signal to be processed
 #  - processingMethods - list of methods with attributes and parameters used for signal processing
