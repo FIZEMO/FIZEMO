@@ -6,7 +6,7 @@
 
   Karolinę Bednarską
 
-  Macieja Szarzeckiego 
+  Macieja Szareckiego 
 
   Iwa Brzyskiego
   
@@ -14,19 +14,20 @@
 ## Potrzebne pakiety przed włączeniem programu
   * matplotlib
 
-    `conda install matplotlib`
+    `pip install matplotlib`
 
   * scipy 
 
-    `python -m pip install`
+    `pip install scipy`
 
   * numpy 
 
-    `conda install numpy`
+    `pip install numpy`
   
   * pandas
 
-    `conda install numpy`
+    `pip install pandas`
+    
   * stat
     
     `pip install pypi-stat`

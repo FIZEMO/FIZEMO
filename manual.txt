@@ -7,23 +7,32 @@
 
     This program gives complete freedom to the user so one can create many processing scenarios,
     and each of them can be given any name. What is more, in each scenario many processing methods can be used in any order,
-    and one processing method can be used more than once during one scenario.
+    and one processing method can be used more than once in the single scenario.
 
     If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
     and I'm sure things will lighten up.
 
-2. METHOD STRUCTURE
+2. SCENARIO STRUCTURE
+    Each scenario defined in configuration file has a special structure. It has to contain three elements:
+    a. "signalFileName" - a string representing the name of the file with signal which is placed in ./signals catalog
+    b. "signalType" - type of processed signal, it has to be chosen from the list of available types of signal (manual.txt, point 3.)
+    c. "methods" - list of methods for signal processing or feature extraction
+
+3. AVAILABLE TYPES OF SIGNAL
+    a. GSR (Galvanic Skin Response)
+
+4. METHOD STRUCTURE
     To call function for processing signal in configuration file one has to fill 3 elements:
-    "function_name": "...",
+    "functionName": "...",
     "order": ...,
     "attributes": { #attributes }
 
-    *   function_name - name of the function one wants to use (string)
+    *   functionName - the name of the function one wants to use (string)
     **  order - natural number bigger or equal 1 which indicates the order of processing flow (int)
     *** attributes - attributes that are unique for each function; they specify function parameters;
-        For some function this element might be omitted (look at [Z NORMALIZATION] function).
+        For some functions this element might be omitted (look at [Z NORMALIZATION] function).
 
-3. AVAILABLE FUNCTIONS
+5. AVAILABLE FUNCTIONS
 
     [DECIMATION]
     Description:  process of bandwidth reduction (filtering) and sample-rate reduction
@@ -37,18 +46,19 @@
     Function name: "z_normalize"
     Attributes: None
 
-4. FEATURE EXTRACTION STRUCTURE
+6. FEATURE EXTRACTION STRUCTURE
     To call function for feature extraction from the signal in configuration file one has to fill 3 elements:
-    "function_name": "...",
+    "functionName": "...",
     "order": ...,
-    "output_label": "..."
+    "outputLabel": "..."
 
-    *   function_name - name of the function one wants to use (string)
+    *   functionName - name of the function one wants to use (string)
     **  order - natural number bigger or equal 1 which indicates the order of processing flow (int)
-    *** (optional) output_label - optional elements where user can define label for extracted feature. (string)
+    *** (optional) outputLabel - optional elements where user can define label for extracted feature. (string)
         If this element is omitted, program will generate default output label for a feature.
+        Otherwise, the label will be exactly the same as specified in the configuration file.
 
-5. AVAILABLE FUNCTIONS FOR FEATURE EXTRACTION
+7. AVAILABLE FUNCTIONS FOR FEATURE EXTRACTION
     [MEAN]
     Description: Function to extract mean value from the signal
     Function name: "mean"
