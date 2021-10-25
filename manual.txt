@@ -56,6 +56,7 @@
     **  order - natural number bigger or equal 1 which indicates the order of processing flow (int)
     *** (optional) outputLabel - optional elements where user can define label for extracted feature. (string)
         If this element is omitted, program will generate default output label for a feature.
+        Otherwise, the label will be exactly the same as specified in the configuration file.
 
 7. AVAILABLE FUNCTIONS FOR FEATURE EXTRACTION
     [MEAN]

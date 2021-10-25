@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 import scipy.stats as stat
-from inspect import signature
 
 
 class Signal:
@@ -109,6 +108,7 @@ class Signal:
            y_name : str
                 The y-axis name
            """
+
         x_axis, y_axis = zip(*self.signal_samples)
         plt.figure(window_name)
         plt.title(title_name)
@@ -128,10 +128,7 @@ class Signal:
            """
 
         value = np.mean(self.get_values())
-        if not attr:
-            self.features.append(["Mean", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def median(self, attr="Median"):
         """Extracts the median value from the signal. After being extracted, values are saved to the features list.
@@ -144,10 +141,7 @@ class Signal:
            """
 
         value = np.median(self.get_values())
-        if not attr:
-            self.features.append(["Median", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def standard_deviation(self, attr="Standard deviation"):
         """Extracts the standard deviation value from the signal. After being extracted,
@@ -161,10 +155,7 @@ class Signal:
            """
 
         value = np.std(self.get_values())
-        if not attr:
-            self.features.append(["Standard deviation", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def minimum(self, attr="Minimum"):
         """Extracts the minimum value from the signal. After being extracted, values are saved to the features list.
@@ -177,10 +168,7 @@ class Signal:
            """
 
         value = np.min(self.get_values())
-        if not attr:
-            self.features.append(["Minimum", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def maximum(self, attr="Maximum"):
         """Extracts the maximum value from the signal. After being extracted, values are saved to the features list.
@@ -193,10 +181,7 @@ class Signal:
            """
 
         value = np.max(self.get_values())
-        if not attr:
-            self.features.append(["Maximum", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def variance(self, attr="Variance"):
         """Extracts the variance value from the signal. After being extracted, values are saved to the features list.
@@ -209,10 +194,7 @@ class Signal:
            """
 
         value = np.var(self.get_values())
-        if not attr:
-            self.features.append(["Variance", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def kurtosis(self, attr="Kurtosis"):
         """Extracts the kurtosis value from the signal. After being extracted, values are saved to the features list.
@@ -225,10 +207,7 @@ class Signal:
            """
 
         value = stat.kurtosis(self.get_values())
-        if not attr:
-            self.features.append(["Kurtosis", value])
-        else:
-            self.features.append([attr, value])
+        self.features.append([attr, value])
 
     def skewness(self, attr="Skewness"):
         """Extracts the skewness value from the signal. After being extracted, values are saved to the features list.
@@ -239,13 +218,10 @@ class Signal:
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
 
            """
-        value = stat.skew(self.get_values())
-        if not attr:
-            self.features.append(["Skewness", value])
-        else:
-            self.features.append([attr, value])
 
-    #
+        value = stat.skew(self.get_values())
+        self.features.append([attr, value])
+
     def get_values(self):
         """Support method to get values out of a sampled signal.
             Since signal is made out of time stamps and corresponding values sometimes we just want to use the values
