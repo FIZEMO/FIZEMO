@@ -81,12 +81,16 @@
           "order": 2
         },
         {
-          "functionName": "maximum",
+          "functionName": "noise_filtering",
           "order": 3
         },
         {
+          "functionName": "maximum",
+          "order": 4
+        },
+        {
           "functionName": "minimum",
-          "order": 4,
+          "order": 5,
           "outputLabel": "minimal"
         }
       ]

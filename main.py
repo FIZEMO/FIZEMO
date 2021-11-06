@@ -105,7 +105,7 @@ def main():
 
     """
 
-    tup_scenarios = load_config_file("./config.json")
+    tup_scenarios = load_config_file("config.json")
     scenarios = convert_json_to_object_list(tup_scenarios)
     process_scenarios(scenarios)
     draw_all_signals(scenarios)

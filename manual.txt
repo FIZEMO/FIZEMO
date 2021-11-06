@@ -46,6 +46,11 @@
     Function name: "z_normalize"
     Attributes: None
 
+    [NOISE FILTERING]
+    Description:  Removes noise from the signal by averaging the samples.
+    Function name: "noise_filtering"
+    Attributes: None
+
 6. FEATURE EXTRACTION STRUCTURE
     To call function for feature extraction from the signal in configuration file one has to fill 3 elements:
     "functionName": "...",
