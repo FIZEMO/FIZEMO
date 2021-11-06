@@ -91,8 +91,8 @@ def draw_all_signals(scenarios):
 
     for scenario in scenarios:
         title = "Processed " + str(scenario.processed_signal.signal_type) + " signal"
-        x = str(scenario.processed_signal.signal_type) + " value"
-        scenario.processed_signal.draw_plot(scenario.scenario_name, title, x, 'TimeStamp')
+        y = str(scenario.processed_signal.signal_type) + " value"
+        scenario.processed_signal.draw_plot(scenario.scenario_name, title, 'TimeStamp', y)
 
 
 #
