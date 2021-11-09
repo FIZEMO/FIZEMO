@@ -85,8 +85,11 @@
           "order": 2
         },
         {
-          "functionName": "noise_filtering",
-          "order": 3
+          "functionName": "smooth",
+          "order": 3,
+          "attributes": {
+            "numberOfIterations": 150
+          }
         },
         {
           "functionName": "maximum",
