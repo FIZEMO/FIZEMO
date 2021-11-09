@@ -21,6 +21,10 @@
           }
         },
         {
+          "functionName": "z_normalize",
+          "order": 11
+        },
+        {
           "functionName": "mean",
           "order": 3,
           "outputLabel": "Średnia"
