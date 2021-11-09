@@ -46,6 +46,13 @@
     Function name: "z_normalize"
     Attributes: None
 
+    [NOISE FILTERING]
+    Description: Smooths out the signal by averaging the samples.
+    Function name: "smooth"
+    Attributes:
+        "numberOfIterations" - This is the number of iterations of the sample smoothing algorithm.
+            The higher the number of iterations, the smoother the signal.
+
 6. FEATURE EXTRACTION STRUCTURE
     To call function for feature extraction from the signal in configuration file one has to fill 3 elements:
     "functionName": "...",

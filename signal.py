@@ -94,6 +94,17 @@ class Signal:
             values = (values - mean) / variance
             self.signal_samples[i][1] = values
 
+    def smooth(self, attr):
+        """Removes noise from the signal
+            It actually is signal smoothing by averaging the samples.
+            For more info visit: https://becominghuman.ai/introduction-to-timeseries-analysis-using-python-numpy-only-3a7c980231af
+        """
+        "We start indexing at 2 because the algorithm needs the previous two samples of the signal to work properly."
+        starting_index = 2
+        for j in range(int(attr["numberOfIterations"])):
+            for i in range(starting_index, len(self.signal_samples)):
+                self.signal_samples[i - 1][1] = (self.signal_samples[i - 2][1] + self.signal_samples[i][1]) / 2
+
     def draw_plot(self, window_name, title_name, x_name, y_name):
         """Plots the signal chart with specified names of window, title, x and y values.
 
