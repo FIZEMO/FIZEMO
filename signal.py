@@ -1,3 +1,4 @@
+import peakutils
 import scipy.signal as ss
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -25,6 +26,8 @@ class Signal:
             -------
             decimate(attr)
                 Decimates the signal.
+            get_phase_part(attr)
+                Gets phase part of given signal.
             z_normalize()
                 Normalizes the signal.
             draw_plot(window_name, title_name, x_name, y_name)
@@ -83,6 +86,21 @@ class Signal:
 
         ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
         self.signal_samples = ss.decimate(self.signal_samples, ratio, 8, axis=0)
+
+    def get_phase_part(self, attr):
+        """Gets phase part of given signal
+
+            Parameters
+            ----------
+            attr : {}
+                The dictionary with attributes:
+                - "deg" is degree of the polynomial that will estimate the data baseline - default is 10
+                - "maxIt" is maximum number of iterations to perform for baseline function - default is 100
+
+            """
+
+        baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
+        self.signal_samples[:, 1] = [(j-p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
     def z_normalize(self):
         """Normalizes the signal."""

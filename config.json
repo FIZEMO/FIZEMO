@@ -115,6 +115,21 @@
             "samplingFrequency": 128,
             "goalFrequency": 10
           }
+        },
+        {
+          "functionName": "get_phase_part",
+          "order": 2,
+          "attributes": {
+            "deg": 10,
+            "maxIt": 100
+          }
+        },
+        {
+          "functionName": "smooth",
+          "order": 3,
+          "attributes": {
+            "numberOfIterations": 1000
+          }
         }
       ]
     }

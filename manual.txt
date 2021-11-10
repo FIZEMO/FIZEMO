@@ -41,6 +41,13 @@
         "samplingFrequency" - frequency with which signal was sampled (integer - [Hz])
         "goalFrequency" - goal frequency with which signal should be sampled (integer - [Hz])
 
+    [GET PHASE PART]
+    Description:  calculate phase part of given signal by subtract baseline values
+    Function name: "get_phase_part"
+    Attributes:
+        "deg" is degree of the polynomial that will estimate the data baseline - default is 10
+        "maxIt" is maximum number of iterations to perform for baseline function - default is 100
+
     [Z NORMALIZATION]
     Description:  process of normalizing signal with algorithm Z
     Function name: "z_normalize"
