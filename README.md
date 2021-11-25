@@ -31,3 +31,7 @@
   * stat
     
     `pip install pypi-stat`
+
+  * peakutils
+    
+    `pip install peakutils`
