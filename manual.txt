@@ -57,7 +57,7 @@
     Description: Smooths out the signal by averaging the samples.
     Function name: "smooth"
     Attributes:
-        "numberOfIterations" - This is the number of iterations of the sample smoothing algorithm.
+        "numberOfIterations" - This is the number of iterations for the sample smoothing algorithm.
             The higher the number of iterations, the smoother the signal.
 
 6. FEATURE EXTRACTION STRUCTURE
