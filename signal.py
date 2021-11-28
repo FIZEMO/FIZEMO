@@ -1,3 +1,6 @@
+import csv
+from datetime import datetime
+
 import peakutils
 import scipy.signal as ss
 from matplotlib import pyplot as plt
@@ -71,6 +74,21 @@ class Signal:
         self.signal_type = signal_type
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.features = []
+
+    def save_signal_csv(self, file_name):
+        """Writes processed signal to the csv file
+
+           Parameters
+           ----------
+           file_name : str
+               The name of the newly created file which contains processed signal data (will be placed in ./signals).
+               The name bases on the scenario file name which was used to process the signal.
+        """
+
+        with open("./signals/" + self.signal_type + "signal " + file_name + ".csv", 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            for element in self.signal_samples:
+                csv_writer.writerow(element)
 
     def decimate(self, attr):
         """Decimates the signal

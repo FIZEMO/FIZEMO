@@ -27,7 +27,7 @@ class Scenario:
         process_methods()
             Processes the signal with all methods defined in the flow scenario.
         write_csv()
-            Writes extracted features to the csv file.
+            Writes extracted features to the csv file and call function to write the processed signal to csv file.
         """
 
     def __init__(self, scenario_name, signal_file_name, signal_type, methods):
@@ -62,19 +62,22 @@ class Scenario:
         for method in self.processing_methods:
             method_to_call = getattr(self.processed_signal, method["functionName"])
             if method.get("attributes") is None and method.get("outputLabel") is None:
-                method_to_call()
+              method_to_call()
             elif method.get("outputLabel") is None:
                 method_to_call(method["attributes"])
             else:
                 method_to_call(method["outputLabel"])
 
     def write_csv(self):
-        """Writes extracted features to the csv file"""
+        """Writes extracted features to the csv file and call function to write the processed signal to csv file"""
 
         date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
+        file_name = self.scenario_name + " " + date
         if self.processed_signal.features.__len__() > 0:
-            with open("./results/" + self.scenario_name + " " + date + ".csv", 'w', newline='') as csv_file:
+            with open("./results/" + file_name + ".csv", 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
                 csv_writer.writerow(['Feature', 'Value'])
                 for element in self.processed_signal.features:
                     csv_writer.writerow(element)
+
+        self.processed_signal.save_signal_csv(file_name)
