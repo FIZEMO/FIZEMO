@@ -71,6 +71,7 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
+
       "methods": [
         {
           "functionName": "decimate",
@@ -92,12 +93,20 @@
           }
         },
         {
+          "functionName": "windowing",
+          "order": 4,
+          "attributes": {
+            "length": 10000,
+            "slide": 10000
+          }
+        },
+        {
           "functionName": "maximum",
-          "order": 4
+          "order": 5
         },
         {
           "functionName": "minimum",
-          "order": 5,
+          "order": 6,
           "outputLabel": "minimal"
         }
       ]

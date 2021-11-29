@@ -14,8 +14,10 @@ class Signal:
 
             Attributes
             ----------
+            main_signal : [[]]
+                the two-dimensions list with main signal [[timestamps, values]]
             signal_samples : [[]]
-                the two-dimensions list with signal [[timestamps, values]]
+                the two-dimensions list with signal samples [[timestamps, values]]
             features : [[]]
                 the two-dimensions list with extracted features [[name of the feature, value]]
             signal_type : str
@@ -69,7 +71,8 @@ class Signal:
         path = './signals/' + signal_file_name + '.csv'
         pandas_data_framed_signal = pd.read_csv(r'' + path)
         self.signal_type = signal_type
-        self.signal_samples = pandas_data_framed_signal.to_numpy()
+        self.main_signal = pandas_data_framed_signal.to_numpy()
+        self.signal_samples = self.main_signal
         self.features = []
 
     def decimate(self, attr):
@@ -98,7 +101,8 @@ class Signal:
                 - "maxIt" is maximum number of iterations to perform for baseline function - default is 100
 
             """
-
+        # col = (self.signal_samples[:, 0] < 1000000) & (self.signal_samples[:, 0] > 990000)
+        # print(self.signal_samples[col])
         baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
         self.signal_samples[:, 1] = [(j-p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
@@ -138,7 +142,7 @@ class Signal:
                 The y-axis name
            """
 
-        x_axis, y_axis = zip(*self.signal_samples)
+        x_axis, y_axis = zip(*self.main_signal)
         plt.figure(window_name)
         plt.title(title_name)
         plt.xlabel(x_name)

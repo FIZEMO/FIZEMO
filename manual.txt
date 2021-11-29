@@ -48,6 +48,13 @@
         "deg" is degree of the polynomial that will estimate the data baseline - default is 10
         "maxIt" is maximum number of iterations to perform for baseline function - default is 100
 
+    [WINDOWING]
+    Description:  divide processed signal into equal size windows; THIS FUNCTION CAN APPEAR ONLY ONCE
+    Function name: "windowing"
+    Attributes:
+        "length" length of the window in time unit (if signal timestamp is in [ms] then write length in [ms] | if timestamp is in [s] then write in [s])
+        "slide" value in time unit describing about how many move the window in time (time unit needs to match the length attribute unit)
+
     [Z NORMALIZATION]
     Description:  process of normalizing signal with algorithm Z
     Function name: "z_normalize"
