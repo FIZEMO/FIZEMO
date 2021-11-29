@@ -1,4 +1,5 @@
 import csv
+import os
 from datetime import datetime
 from signal import Signal
 from operator import itemgetter
@@ -26,8 +27,12 @@ class Scenario:
             Sorts methods in the scenario by their order.
         process_methods()
             Processes the signal with all methods defined in the flow scenario.
-        write_csv()
+        save_results()
+            Writes extracted features and processed signal to separate .csv files
+        save_feature_csv()
             Writes extracted features to the csv file and call function to write the processed signal to csv file.
+        save_signal_csv()
+            Writes processed signal to the csv file.
         """
 
     def __init__(self, scenario_name, signal_file_name, signal_type, methods):
@@ -68,16 +73,51 @@ class Scenario:
             else:
                 method_to_call(method["outputLabel"])
 
-    def write_csv(self):
-        """Writes extracted features to the csv file and call function to write the processed signal to csv file"""
+    def save_results(self):
+        """Writes extracted features and processed signal to separate .csv files"""
 
         date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
-        file_name = self.scenario_name + " " + date
+        features_file_name = self.scenario_name + " " + date
+        signal_file_name = self.processed_signal.signal_type + "signal " + features_file_name
+
+        if not os.path.exists("./results/features"):
+            os.makedirs("./results/features")
+        if not os.path.exists("./results/signals"):
+            os.makedirs("./results/signals")
+
+        self.save_feature_csv(features_file_name)
+        self.save_signal_csv(signal_file_name)
+
+    def save_feature_csv(self, file_name):
+        """Writes extracted features to the csv file and call function to write the processed signal to csv file
+
+            Parameters
+           ----------
+           file_name : str
+               The name of the newly created file which contains extracted features data
+               (will be placed in ./results/features/).
+               The name is compatible with the signal file name which is also saved after running the scenario.
+        """
+
         if self.processed_signal.features.__len__() > 0:
-            with open("./results/" + file_name + ".csv", 'w', newline='') as csv_file:
+            with open("./results/features/" + file_name + ".csv", 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
                 csv_writer.writerow(['Feature', 'Value'])
                 for element in self.processed_signal.features:
                     csv_writer.writerow(element)
 
-        self.processed_signal.save_signal_csv(file_name)
+    def save_signal_csv(self, file_name):
+        """Writes processed signal to the csv file
+
+           Parameters
+           ----------
+           file_name : str
+               The name of the newly created file which contains processed signal data
+               (will be placed in ./results/signals/).
+               The name bases on the scenario file name which was used to process the signal.
+        """
+
+        with open("./results/signals/" + file_name + ".csv", 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            for element in self.processed_signal.signal_samples:
+                csv_writer.writerow(element)

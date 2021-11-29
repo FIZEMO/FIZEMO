@@ -11,8 +11,8 @@
 
     As the result, for each scenario user receives .csv files which contains:
     * extracted features from processed signal
-        - only if at least one feature was specified in the scenario (file placed in ./results directory)
-    *  signal after all modifications and running processing methods (file placed in ./signals directory).
+        - only if at least one feature was specified in the scenario (file placed in ./results/features/ directory)
+    *  signal after all modifications and running processing methods (file placed in ./results/signals/ directory).
 
     If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
     and I'm sure things will lighten up.
