@@ -120,23 +120,23 @@ class Scenario:
                     else:
                         method_to_call(method["outputLabel"])
 
-                        if not self.write_to_csv:
-                            self.write_to_csv.append([x[0] for x in self.processed_signal.features])
-                            self.write_to_csv.append([x[1] for x in self.processed_signal.features])
-                        else:
-                            self.write_to_csv.append([x[1] for x in self.processed_signal.features])
+                if not self.write_to_csv:
+                    self.write_to_csv.append([x[0] for x in self.processed_signal.features])
+                    self.write_to_csv.append([x[1] for x in self.processed_signal.features])
+                else:
+                    self.write_to_csv.append([x[1] for x in self.processed_signal.features])
 
-                        self.processed_signal.features.clear()
+                self.processed_signal.features.clear()
 
-                        if window_stop > self.processed_signal.main_signal[-1, 0]:
-                            break
+                if window_stop > self.processed_signal.main_signal[-1, 0]:
+                    break
 
-                elif self.processed_signal.features:
-                self.processed_signal.main_signal = self.processed_signal.signal_samples
-                self.write_to_csv.append([x[0] for x in self.processed_signal.features])
-                self.write_to_csv.append([x[1] for x in self.processed_signal.features])
-            else:
-                self.processed_signal.main_signal = self.processed_signal.signal_samples
+        elif self.processed_signal.features:
+            self.processed_signal.main_signal = self.processed_signal.signal_samples
+            self.write_to_csv.append([x[0] for x in self.processed_signal.features])
+            self.write_to_csv.append([x[1] for x in self.processed_signal.features])
+        else:
+            self.processed_signal.main_signal = self.processed_signal.signal_samples
 
     def save_results(self):
         """Writes extracted features and processed signal to separate .csv files"""
@@ -170,7 +170,6 @@ class Scenario:
 
                 if self.windowing_mode:
                     csv_writer.writerow(["Window length: "+str(self.windowing_info["attributes"]["length"])+" ms"])
-
                 csv_writer.writerows(self.write_to_csv)
 
     def save_signal_csv(self, file_name):
