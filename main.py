@@ -76,7 +76,7 @@ def process_scenarios(scenarios):
 
     for scenario in scenarios:
         scenario.process_methods()
-        scenario.write_csv()
+        scenario.save_results()
 
 
 def draw_all_signals(scenarios):
