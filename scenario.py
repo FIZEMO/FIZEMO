@@ -164,7 +164,7 @@ class Scenario:
                The name is compatible with the signal file name which is also saved after running the scenario.
         """
 
-        if self.processed_signal.features.__len__() > 0:
+        if self.write_to_csv.__len__() > 0:
             with open("./results/features/" + file_name + ".csv", 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
 
