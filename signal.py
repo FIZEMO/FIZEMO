@@ -1,3 +1,6 @@
+import csv
+from datetime import datetime
+
 import peakutils
 import scipy.signal as ss
 from matplotlib import pyplot as plt
@@ -120,12 +123,25 @@ class Signal:
         """Removes noise from the signal
             It actually is signal smoothing by averaging the samples.
             For more info visit: https://becominghuman.ai/introduction-to-timeseries-analysis-using-python-numpy-only-3a7c980231af
+
+            Parameters
+            ----------
+            attr : {}
+                The dictionary with attribute:
+                - "numberOfIterations" - The number of iterations for the sample smoothing algorithm.
+
         """
+
         "We start indexing at 2 because the algorithm needs the previous two samples of the signal to work properly."
         starting_index = 2
+
+        """Signal is an array of two-elements arrays with signal timestamp and value, where value is at the second place.
+            In order to get only value we have to point at the index 1 - therefore: value_of_signal = 1
+        """
+        value_of_signal = 1
         for j in range(int(attr["numberOfIterations"])):
             for i in range(starting_index, len(self.signal_samples)):
-                self.signal_samples[i - 1][1] = (self.signal_samples[i - 2][1] + self.signal_samples[i][1]) / 2
+                self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] + self.signal_samples[i][value_of_signal]) / 2
 
     def draw_plot(self, window_name, title_name, x_name, y_name):
         """Plots the signal chart with specified names of window, title, x and y values.

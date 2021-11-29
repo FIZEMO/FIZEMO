@@ -9,6 +9,11 @@
     and each of them can be given any name. What is more, in each scenario many processing methods can be used in any order,
     and one processing method can be used more than once in the single scenario.
 
+    As the result, for each scenario user receives .csv files which contains:
+    * extracted features from processed signal
+        - only if at least one feature was specified in the scenario (file placed in ./results/features/ directory)
+    *  signal after all modifications and running processing methods (file placed in ./results/signals/ directory).
+
     If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
     and I'm sure things will lighten up.
 
@@ -64,7 +69,7 @@
     Description: Smooths out the signal by averaging the samples.
     Function name: "smooth"
     Attributes:
-        "numberOfIterations" - This is the number of iterations of the sample smoothing algorithm.
+        "numberOfIterations" - This is the number of iterations for the sample smoothing algorithm.
             The higher the number of iterations, the smoother the signal.
 
 6. FEATURE EXTRACTION STRUCTURE
