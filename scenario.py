@@ -39,6 +39,8 @@ class Scenario:
             Writes extracted features to the csv file and call function to write the processed signal to csv file.
         save_signal_csv()
             Writes processed signal to the csv file.
+        window_signal()
+            process signal divided into equal length windows
         """
 
     def __init__(self, scenario_name, signal_file_name, signal_type, methods):
@@ -69,12 +71,59 @@ class Scenario:
 
         self.processing_methods.sort(key=itemgetter('order'), reverse=False)
 
+
+    def window_signal(self, start_method_index):
+        """process signal divided into equal length windows"""
+
+        window_start = self.processed_signal.main_signal[0, 0]
+        window_stop = window_start + self.windowing_info["attributes"]["length"]
+
+        left_condition = self.processed_signal.main_signal[:, 0] >= window_start
+        right_condition = self.processed_signal.main_signal[:, 0] <= window_stop
+
+        self.processed_signal.signal_samples = self.processed_signal.main_signal[left_condition & right_condition]
+        self.write_to_csv.clear()
+        self.processed_signal.features.clear()
+
+        while True:
+            if self.write_to_csv:
+                window_start += self.windowing_info["attributes"]["slide"]
+                window_stop += self.windowing_info["attributes"]["slide"]
+
+                left_condition = self.processed_signal.main_signal[:, 0] >= window_start
+                right_condition = self.processed_signal.main_signal[:, 0] <= window_stop
+
+                self.processed_signal.signal_samples = self.processed_signal.main_signal[
+                    left_condition & right_condition]
+
+            for index in range(start_method_index, self.processing_methods.__len__()):
+                method = self.processing_methods[index]
+                method_to_call = getattr(self.processed_signal, method["functionName"])
+                if method.get("attributes") is None and method.get("outputLabel") is None:
+                    method_to_call()
+                elif method.get("outputLabel") is None:
+                    method_to_call(method["attributes"])
+                else:
+                    method_to_call(method["outputLabel"])
+
+            if not self.write_to_csv:
+                self.write_to_csv.append([x[0] for x in self.processed_signal.features])
+                self.write_to_csv.append([x[1] for x in self.processed_signal.features])
+            else:
+                self.write_to_csv.append([x[1] for x in self.processed_signal.features])
+
+            self.processed_signal.features.clear()
+
+            if window_stop > self.processed_signal.main_signal[-1, 0]:
+                break
+
+
     def process_methods(self):
         """Processes all defined methods in the flow scenario"""
 
         self.sort_methods_by_order()
 
-        for method in self.processing_methods:
+        for index, method in enumerate(self.processing_methods):
             if method["functionName"] != "windowing":
                 method_to_call = getattr(self.processed_signal, method["functionName"])
                 if method.get("attributes") is None and method.get("outputLabel") is None:
@@ -87,56 +136,17 @@ class Scenario:
                 self.windowing_mode = True
                 self.windowing_info.update(method)
                 self.processed_signal.main_signal = self.processed_signal.signal_samples
+                self.window_signal(index+1)
                 break
 
-        if self.windowing_mode:
-            window_start = self.processed_signal.main_signal[0, 0]
-            window_stop = window_start + self.windowing_info["attributes"]["length"]
+        if not self.windowing_mode:
+            if self.processed_signal.features:
+                self.processed_signal.main_signal = self.processed_signal.signal_samples
+                self.write_to_csv.append([x[0] for x in self.processed_signal.features])
+                self.write_to_csv.append([x[1] for x in self.processed_signal.features])
+            else:
+                self.processed_signal.main_signal = self.processed_signal.signal_samples
 
-            left_condition = self.processed_signal.main_signal[:, 0] >= window_start
-            right_condition = self.processed_signal.main_signal[:, 0] <= window_stop
-
-            self.processed_signal.signal_samples = self.processed_signal.main_signal[left_condition & right_condition]
-            self.write_to_csv.clear()
-            self.processed_signal.features.clear()
-
-            while True:
-                if self.write_to_csv:
-                    window_start += self.windowing_info["attributes"]["slide"]
-                    window_stop += self.windowing_info["attributes"]["slide"]
-
-                    left_condition = self.processed_signal.main_signal[:, 0] >= window_start
-                    right_condition = self.processed_signal.main_signal[:, 0] <= window_stop
-
-                    self.processed_signal.signal_samples = self.processed_signal.main_signal[left_condition & right_condition]
-
-                for index in range(self.windowing_info["order"], self.processing_methods.__len__()):
-                    method = self.processing_methods[index]
-                    method_to_call = getattr(self.processed_signal, method["functionName"])
-                    if method.get("attributes") is None and method.get("outputLabel") is None:
-                        method_to_call()
-                    elif method.get("outputLabel") is None:
-                        method_to_call(method["attributes"])
-                    else:
-                        method_to_call(method["outputLabel"])
-
-                if not self.write_to_csv:
-                    self.write_to_csv.append([x[0] for x in self.processed_signal.features])
-                    self.write_to_csv.append([x[1] for x in self.processed_signal.features])
-                else:
-                    self.write_to_csv.append([x[1] for x in self.processed_signal.features])
-
-                self.processed_signal.features.clear()
-
-                if window_stop > self.processed_signal.main_signal[-1, 0]:
-                    break
-
-        elif self.processed_signal.features:
-            self.processed_signal.main_signal = self.processed_signal.signal_samples
-            self.write_to_csv.append([x[0] for x in self.processed_signal.features])
-            self.write_to_csv.append([x[1] for x in self.processed_signal.features])
-        else:
-            self.processed_signal.main_signal = self.processed_signal.signal_samples
 
     def save_results(self):
         """Writes extracted features and processed signal to separate .csv files"""
@@ -185,5 +195,5 @@ class Scenario:
 
         with open("./results/signals/" + file_name + ".csv", 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
-            for element in self.processed_signal.signal_samples:
+            for element in self.processed_signal.main_signal:
                 csv_writer.writerow(element)
