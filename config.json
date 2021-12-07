@@ -1,4 +1,22 @@
 {
+  "Scenariusz ECG": [
+    {
+      "signalFileName": "ECG_1",
+      "signalType": "ECG",
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 1,
+           "attributes": {
+             "order": 5,
+             "samplingFrequency": 250,
+             "type": "bandpass",
+             "cutOfFrequencies": [5, 15]
+          }
+        }
+      ]
+    }
+  ],
   "Scenariusz 1": [
     {
       "signalFileName": "rawGSR",

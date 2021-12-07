@@ -43,6 +43,21 @@
     Description:  process of bandwidth reduction (filtering) and sample-rate reduction
     Function name: "decimate"
     Attributes:
+       - "samplingFrequency" - signal sampling rate/frequency (integer - [Hz])
+       - "order" - the order of filter that will be created (integer - [Hz])
+       - "type" - the type of the filter. Available types (string):
+            'lowpass',
+            'highpass'
+            'bandpass'
+            'bandstop'
+       - "cut_of_freq" it is an array or a scalar of cut of frequencies.
+            Scalar for 'lowpass' and 'highpass' filter (float - [Hz]). Example: 5.0
+            Array of two values for 'bandpass' and 'bandstop' filter ([float, float] - [Hz]). Example: [5.0, 15.0]
+
+    [BUTTERWORTH FILTER]
+    Description:  Filter the signal with butterworth filter
+    Function name: "butterworth_filter"
+    Attributes:
         "samplingFrequency" - frequency with which signal was sampled (integer - [Hz])
         "goalFrequency" - goal frequency with which signal should be sampled (integer - [Hz])
 

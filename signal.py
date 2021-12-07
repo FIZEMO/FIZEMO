@@ -75,6 +75,48 @@ class Signal:
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.features = []
 
+    def butterworth_filter(self, attr):
+        """Creating and using Butterworth digital filter
+
+           Parameters
+           ----------
+           attr : {}
+               The dictionary with attributes:
+               - "samplingFrequency" is signal sampling rate - frequency
+               - "order" is the order of created filter
+               - "type" is the type of created filter. Available types:
+                    'lowpass',
+                    'highpass'
+                    'bandpass'
+                    'bandstop'
+               - "cut_of_freq" it is an array or a scalar of cut of frequencies.
+                    Scalar for lowpass and highpass filter.
+                    Array for bandpass and bandstop filter.
+           """
+
+        order = attr["order"]
+        freq = attr["samplingFrequency"]
+        type = attr["type"]
+        cut_of_freq = attr["cutOfFrequencies"]
+
+        nyquist_freq = 0.5 * freq
+
+        """Normalization of frequency values by the Nyquist frequency f = f / fn"""
+        if isinstance(cut_of_freq, list):
+            cut_of_freq = [elem / nyquist_freq for elem in cut_of_freq]
+        else:
+            cut_of_freq = cut_of_freq / nyquist_freq
+
+        """Creating coefficients of the filter"""
+        b, a = ss.butter(order, cut_of_freq, btype=type, analog=False)
+
+        """Applying created coefficients to the signal.Filtered signal is applied only to the values of the signal. 
+             It did not changed the timestamps."""
+        values_of_signal = 1
+        y = ss.lfilter(b, a, self.get_values())
+        for i in range(len(y)):
+            self.signal_samples[i][values_of_signal] = y[i]
+
     def decimate(self, attr):
         """Decimates the signal
 
@@ -103,7 +145,7 @@ class Signal:
             """
 
         baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
-        self.signal_samples[:, 1] = [(j-p) for j, p in zip(self.signal_samples[:, 1], baseline)]
+        self.signal_samples[:, 1] = [(j - p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
     def z_normalize(self):
         """Normalizes the signal."""
@@ -137,7 +179,8 @@ class Signal:
         value_of_signal = 1
         for j in range(int(attr["numberOfIterations"])):
             for i in range(starting_index, len(self.signal_samples)):
-                self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] + self.signal_samples[i][value_of_signal]) / 2
+                self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] +
+                                                               self.signal_samples[i][value_of_signal]) / 2
 
     def draw_plot(self, window_name, title_name, x_name, y_name):
         """Plots the signal chart with specified names of window, title, x and y values.
