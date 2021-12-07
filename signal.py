@@ -113,9 +113,39 @@ class Signal:
         """Applying created coefficients to the signal.Filtered signal is applied only to the values of the signal. 
              It did not changed the timestamps."""
         values_of_signal = 1
-        y = ss.lfilter(b, a, self.get_values())
-        for i in range(len(y)):
-            self.signal_samples[i][values_of_signal] = y[i]
+        filtered_values = ss.lfilter(b, a, self.get_values())
+        for i in range(len(filtered_values)):
+            self.signal_samples[i][values_of_signal] = filtered_values[i]
+
+    def differentiate(self):
+        """Differentiation of the signal"""
+
+        differentiated_signal = np.ediff1d(self.get_values())
+        for i in range(len(differentiated_signal)):
+            self.signal_samples[i][1] = differentiated_signal[i]
+
+    def square(self):
+        """Squares the signal"""
+
+        squared_signal = np.square(self.get_values())
+        for i in range(len(squared_signal)):
+            self.signal_samples[i][1] = squared_signal[i]
+
+    def moving_window_integration(self, attr):
+        """Creating and using Butterworth digital filter
+
+           Parameters
+           ----------
+           attr : {}
+               The dictionary with attributes:
+               - "samplingFrequency" is signal sampling rate - frequency
+           """
+        length_of_window = attr["lengthOfWindow"]
+
+        integrated_signal = np.convolve(self.get_values(), np.ones(length_of_window))
+
+        for i in range(len(self.signal_samples)):
+            self.signal_samples[i][1] = integrated_signal[i]
 
     def decimate(self, attr):
         """Decimates the signal
