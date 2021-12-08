@@ -39,7 +39,7 @@
 
 5. AVAILABLE FUNCTIONS
 
-    [DECIMATION]
+    [BUTTERWORTH FILTER]
     Description:  process of bandwidth reduction (filtering) and sample-rate reduction
     Function name: "decimate"
     Attributes:
@@ -54,7 +54,7 @@
             Scalar for 'lowpass' and 'highpass' filter (float - [Hz]). Example: 5.0
             Array of two values for 'bandpass' and 'bandstop' filter ([float, float] - [Hz]). Example: [5.0, 15.0]
 
-    [BUTTERWORTH FILTER]
+    [DECIMATION]
     Description:  Filter the signal with butterworth filter
     Function name: "butterworth_filter"
     Attributes:
