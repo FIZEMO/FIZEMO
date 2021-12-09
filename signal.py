@@ -27,12 +27,22 @@ class Signal:
 
             Methods
             -------
+            butterworth_filter(attr)
+                Creates and applies filter on the signal.
+            differentiate()
+                Differentiate the signal.
+            square()
+                Squares values of the signal.
+            moving_window_integration(attr)
+                Integrates the signal with moving window function.
             decimate(attr)
                 Decimates the signal.
             get_phase_part(attr)
                 Gets phase part of given signal.
             z_normalize()
                 Normalizes the signal.
+            smooth()
+                Smooths the signal by averaging the samples.
             draw_plot(window_name, title_name, x_name, y_name)
                 Plots the signal chart with specified names of window, title, x and y values.
             mean(attr)
@@ -82,20 +92,24 @@ class Signal:
            ----------
            attr : {}
                The dictionary with attributes:
-               - "samplingFrequency" is signal sampling rate - frequency
-               - "order" is the order of created filter
-               - "type" is the type of created filter. Available types:
-                    'lowpass',
-                    'highpass'
-                    'bandpass'
-                    'bandstop'
-               - "cut_of_freq" it is an array or a scalar of cut of frequencies.
-                    Scalar for lowpass and highpass filter.
-                    Array for bandpass and bandstop filter.
+               - samplingRate: int
+                    rate that the signal has been sampled with
+               - order: int
+                    order of created filter
+               - type: str
+                    type of created filter. Available types:
+                        'lowpass',
+                        'highpass'
+                        'bandpass'
+                        'bandstop'
+               - cut_of_freq: int | [int, int]
+                    an array or a scalar of cut of frequencies that will be aplied to the filter
+                        Scalar for 'lowpass' and 'highpass' filter.
+                        Array for 'bandpass' and 'bandstop' filter.
            """
 
         order = attr["order"]
-        freq = attr["samplingFrequency"]
+        freq = attr["samplingRate"]
         type = attr["type"]
         cut_of_freq = attr["cutOfFrequencies"]
 
@@ -118,7 +132,7 @@ class Signal:
             self.signal_samples[i][values_of_signal] = filtered_values[i]
 
     def differentiate(self):
-        """Differentiation of the signal"""
+        """Differentiate the signal"""
 
         differentiated_signal = np.ediff1d(self.get_values())
         for i in range(len(differentiated_signal)):
@@ -132,14 +146,16 @@ class Signal:
             self.signal_samples[i][1] = squared_signal[i]
 
     def moving_window_integration(self, attr):
-        """Creating and using Butterworth digital filter
+        """Integrate the signal with moving frame of the given length
 
            Parameters
            ----------
            attr : {}
                The dictionary with attributes:
-               - "samplingFrequency" is signal sampling rate - frequency
+               - lengthOfWindow: int
+                    length of the moving window
            """
+
         length_of_window = attr["lengthOfWindow"]
 
         integrated_signal = np.convolve(self.get_values(), np.ones(length_of_window))
@@ -154,9 +170,10 @@ class Signal:
            ----------
            attr : {}
                The dictionary with attributes:
-               - "samplingFrequency" is frequency with which signal was sampled
-               - "goalFrequency" is goal frequency with which signal should be sampled
-
+               - samplingFrequency: int
+                    frequency with which signal was sampled
+               - goalFrequency: int
+                    goal frequency with which signal should be sampled
            """
 
         ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
@@ -169,9 +186,10 @@ class Signal:
             ----------
             attr : {}
                 The dictionary with attributes:
-                - "deg" is degree of the polynomial that will estimate the data baseline - default is 10
-                - "maxIt" is maximum number of iterations to perform for baseline function - default is 100
-
+                - deg: int
+                    degree of the polynomial that will estimate the data baseline - default is 10
+                - maxIt: int
+                    maximum number of iterations to perform for baseline function - default is 100
             """
 
         baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
@@ -196,8 +214,8 @@ class Signal:
             ----------
             attr : {}
                 The dictionary with attribute:
-                - "numberOfIterations" - The number of iterations for the sample smoothing algorithm.
-
+                - numberOfIterations: int
+                    The number of iterations for the sample smoothing algorithm.
         """
 
         "We start indexing at 2 because the algorithm needs the previous two samples of the signal to work properly."

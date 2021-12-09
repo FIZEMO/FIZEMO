@@ -9,7 +9,7 @@
           "order": 2,
           "attributes": {
             "order": 5,
-            "samplingFrequency": 250,
+            "samplingRate": 250,
             "type": "bandpass",
             "cutOfFrequencies": [
               5,
@@ -35,14 +35,137 @@
       ]
     }
   ],
-  "Scenariusz ECG1": [
+  "Scenariusz 1": [
     {
-      "signalFileName": "ECG_1",
-      "signalType": "ECG",
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
       "methods": [
         {
+          "functionName": "decimate",
+          "order": 2,
+          "attributes": {
+            "samplingFrequency": 50,
+            "goalFrequency": 10
+          }
+        },
+        {
+          "functionName": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 50
+          }
+        },
+        {
+          "functionName": "z_normalize",
+          "order": 11
+        },
+        {
           "functionName": "mean",
+          "order": 3,
+          "outputLabel": "Średnia"
+        },
+        {
+          "functionName": "median",
+          "order": 4,
+          "outputLabel": "Mediana"
+        },
+        {
+          "functionName": "standard_deviation",
+          "order": 5,
+          "outputLabel": "Odchylenie standardowe"
+        },
+        {
+          "functionName": "kurtosis",
+          "order": 7,
+          "outputLabel": "Skrzywienie"
+        },
+        {
+          "functionName": "skewness",
+          "order": 6,
+          "outputLabel": "Skośność"
+        },
+        {
+          "functionName": "variance",
+          "order": 8,
+          "outputLabel": "Wariancja"
+        },
+        {
+          "functionName": "minimum",
+          "order": 10,
+          "outputLabel": "Minimalna"
+        },
+        {
+          "functionName": "maximum",
+          "order": 9,
+          "outputLabel": ""
+        }
+      ]
+    }
+  ],
+  "Scenariusz 2": [
+    {
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
+      "methods": [
+        {
+          "functionName": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 10
+          }
+        },
+        {
+          "functionName": "z_normalize",
           "order": 2
+        },
+        {
+          "functionName": "smooth",
+          "order": 3,
+          "attributes": {
+            "numberOfIterations": 150
+          }
+        },
+        {
+          "functionName": "maximum",
+          "order": 4
+        },
+        {
+          "functionName": "minimum",
+          "order": 5,
+          "outputLabel": "minimal"
+        }
+      ]
+    }
+  ],
+  "Scenariusz 3": [
+    {
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
+      "methods": [
+        {
+          "functionName": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 10
+          }
+        },
+        {
+          "functionName": "get_phase_part",
+          "order": 2,
+          "attributes": {
+            "deg": 10,
+            "maxIt": 100
+          }
+        },
+        {
+          "functionName": "smooth",
+          "order": 3,
+          "attributes": {
+            "numberOfIterations": 1000
+          }
         }
       ]
     }

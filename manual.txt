@@ -43,7 +43,8 @@
     Description:  process of bandwidth reduction (filtering) and sample-rate reduction
     Function name: "decimate"
     Attributes:
-       - "samplingFrequency" - signal sampling rate/frequency (integer - [Hz])
+       - "samplingRate" - signal sampling rate/frequency (integer - [Hz])
+            !REMEMBER!: If you have used decimation function, you should type in sampling rate you achieved after decimation process!
        - "order" - the order of filter that will be created (integer - [Hz])
        - "type" - the type of the filter. Available types (string):
             'lowpass',
@@ -72,6 +73,22 @@
     Description:  process of normalizing signal with algorithm Z
     Function name: "z_normalize"
     Attributes: None
+
+    [DIFFERENTIATE]
+    Description: Differentiate the signal
+    Function name: "differentiate"
+    Attributes: None
+
+    [SQUARE]
+    Description: Squares every value of the signal
+    Function name: "square"
+    Attributes: None
+
+    [MOVING WINDOW INTEGRATION]
+    Description:  Integrate the signal with moving frame of the given length
+    Function name: "moving_window_integration"
+    Attributes:
+        "lengthOfWindow": length of the moving window (integer - number of samples)
 
     [NOISE FILTERING]
     Description: Smooths out the signal by averaging the samples.
