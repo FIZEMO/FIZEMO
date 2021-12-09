@@ -35,7 +35,7 @@ class Scenario:
             Writes processed signal to the csv file.
         """
 
-    def __init__(self, scenario_name, signal_file_name, signal_type, methods):
+    def __init__(self, scenario_name, signal_file_name, signal_type, methods, windowing_attr=None):
         """Initialization of the Scenario object
 
             Parameters
@@ -53,7 +53,7 @@ class Scenario:
             """
         self.scenario_name = scenario_name
         self.processing_methods = methods
-        self.processed_signal = Signal(signal_file_name, signal_type)
+        self.processed_signal = Signal(signal_file_name, signal_type, windowing_attr)
 
     def sort_methods_by_order(self):
         """Sorts methods in the scenario by their order"""

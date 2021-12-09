@@ -3,6 +3,7 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
+      "windowing": {"length": 1000, "slide": 500},
       "methods": [
         {
           "functionName": "decimate",
@@ -99,6 +100,21 @@
           "functionName": "minimum",
           "order": 5,
           "outputLabel": "minimal"
+        },
+        {
+          "functionName": "kurtosis",
+          "order": 7,
+          "outputLabel": "Skrzywienie"
+        },
+        {
+          "functionName": "skewness",
+          "order": 6,
+          "outputLabel": "Skośność"
+        },
+        {
+          "functionName": "variance",
+          "order": 8,
+          "outputLabel": "Wariancja"
         }
       ]
     }

@@ -55,7 +55,7 @@ class Signal:
                 Support method to get signal values out of a sampled signal.
             """
 
-    def __init__(self, signal_file_name, signal_type):
+    def __init__(self, signal_file_name, signal_type, windowing_attr=None):
         """Initialization of the Signal object which include loading the signal from .csv file and
             saving it as signal_samples property
 
@@ -73,6 +73,7 @@ class Signal:
         pandas_data_framed_signal = pd.read_csv(r'' + path)
         self.signal_type = signal_type
         self.signal_samples = pandas_data_framed_signal.to_numpy()
+        self.windowing_attributes = windowing_attr
         self.features = []
 
     def decimate(self, attr):
@@ -108,8 +109,8 @@ class Signal:
     def z_normalize(self):
         """Normalizes the signal."""
 
-        mean = np.mean(self.get_values())
-        variance = np.var(self.get_values())
+        mean = np.mean(self.get_signal_values())
+        variance = np.var(self.get_signal_values())
 
         for i, (timestamps, values) in enumerate(self.signal_samples):
             values = (values - mean) / variance
@@ -172,8 +173,12 @@ class Signal:
 
            """
 
-        value = np.mean(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(np.mean(window))
+
+        self.features.append([attr, feature_values])
 
     def median(self, attr="Median"):
         """Extracts the median value from the signal. After being extracted, values are saved to the features list.
@@ -185,8 +190,12 @@ class Signal:
 
            """
 
-        value = np.median(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(np.median(window))
+
+        self.features.append([attr, feature_values])
 
     def standard_deviation(self, attr="Standard deviation"):
         """Extracts the standard deviation value from the signal. After being extracted,
@@ -199,8 +208,12 @@ class Signal:
 
            """
 
-        value = np.std(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(np.std(window))
+
+        self.features.append([attr, feature_values])
 
     def minimum(self, attr="Minimum"):
         """Extracts the minimum value from the signal. After being extracted, values are saved to the features list.
@@ -212,8 +225,12 @@ class Signal:
 
            """
 
-        value = np.min(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(np.min(window))
+
+        self.features.append([attr, feature_values])
 
     def maximum(self, attr="Maximum"):
         """Extracts the maximum value from the signal. After being extracted, values are saved to the features list.
@@ -225,8 +242,12 @@ class Signal:
 
            """
 
-        value = np.max(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(np.max(window))
+
+        self.features.append([attr, feature_values])
 
     def variance(self, attr="Variance"):
         """Extracts the variance value from the signal. After being extracted, values are saved to the features list.
@@ -238,8 +259,12 @@ class Signal:
 
            """
 
-        value = np.var(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(np.var(window))
+
+        self.features.append([attr, feature_values])
 
     def kurtosis(self, attr="Kurtosis"):
         """Extracts the kurtosis value from the signal. After being extracted, values are saved to the features list.
@@ -251,8 +276,12 @@ class Signal:
 
            """
 
-        value = stat.kurtosis(self.get_values())
-        self.features.append([attr, value])
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(stat.kurtosis(window))
+
+        self.features.append([attr, feature_values])
 
     def skewness(self, attr="Skewness"):
         """Extracts the skewness value from the signal. After being extracted, values are saved to the features list.
@@ -263,11 +292,22 @@ class Signal:
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
 
            """
+        signal_values = self.get_values_for_features()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(stat.skew(window))
 
-        value = stat.skew(self.get_values())
-        self.features.append([attr, value])
+        self.features.append([attr, feature_values])
 
-    def get_values(self):
+    def get_signal_values(self):
+
+        values_list = list()
+        for iterator in range(len(self.signal_samples)):
+            values_list.append(self.signal_samples[iterator][1])
+
+        return values_list
+
+    def get_values_for_features(self):
         """Support method to get values out of a sampled signal.
             Since signal is made out of time stamps and corresponding values sometimes we just want to use the values
             e.g: feature extraction.
@@ -275,7 +315,37 @@ class Signal:
         """
 
         values = list()
-        for iterator in range(len(self.signal_samples)):
-            values.append(self.signal_samples[iterator][1])
+
+        if self.windowing_attributes is None:
+            values.append(self.get_signal_values())
+        else:
+            values = self.divide_into_windows()
+
+        return values
+
+    def divide_into_windows(self):
+        values = list()
+
+        window_start = self.signal_samples[0, 0]
+        window_stop = window_start + self.windowing_attributes["length"]
+
+        left_condition = self.signal_samples[:, 0] >= window_start
+        right_condition = self.signal_samples[:, 0] <= window_stop
+
+        wind = self.signal_samples[left_condition & right_condition].tolist()
+        values.append([x[1] for x in wind])
+
+        while True:
+            window_start += self.windowing_attributes["slide"]
+            window_stop += self.windowing_attributes["slide"]
+
+            if window_stop > self.signal_samples[-1, 0]:
+                break
+
+            left_condition = self.signal_samples[:, 0] >= window_start
+            right_condition = self.signal_samples[:, 0] <= window_stop
+
+            wind = self.signal_samples[left_condition & right_condition].tolist()
+            values.append([x[1] for x in wind])
 
         return values

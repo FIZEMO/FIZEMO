@@ -56,10 +56,18 @@ def convert_json_to_object_list(json_tup_scenarios_list):
 
     scenarios = []
     for scenario in json_tup_scenarios_list:
-        scenario_object = Scenario(scenario[SCENARIO_NAME],
-                                   scenario[DICTIONARY]["signalFileName"],
-                                   scenario[DICTIONARY]["signalType"],
-                                   scenario[DICTIONARY]["methods"])
+        if scenario[DICTIONARY].get("windowing") is not None:
+            scenario_object = Scenario(scenario[SCENARIO_NAME],
+                                       scenario[DICTIONARY]["signalFileName"],
+                                       scenario[DICTIONARY]["signalType"],
+                                       scenario[DICTIONARY]["methods"],
+                                       scenario[DICTIONARY]["windowing"])
+        else:
+            scenario_object = Scenario(scenario[SCENARIO_NAME],
+                                       scenario[DICTIONARY]["signalFileName"],
+                                       scenario[DICTIONARY]["signalType"],
+                                       scenario[DICTIONARY]["methods"])
+
         scenarios.append(scenario_object)
     return scenarios
 
