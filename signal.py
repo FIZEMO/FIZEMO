@@ -124,26 +124,22 @@ class Signal:
         """Creating coefficients of the filter"""
         b, a = ss.butter(order, cut_of_freq, btype=type, analog=False)
 
-        """Applying created coefficients to the signal.Filtered signal is applied only to the values of the signal. 
+        """Applying created filter's coefficients to the signal.Filtered signal is applied only to the values of the signal. 
              It did not changed the timestamps."""
-        values_of_signal = 1
         filtered_values = ss.lfilter(b, a, self.get_values())
-        for i in range(len(filtered_values)):
-            self.signal_samples[i][values_of_signal] = filtered_values[i]
+        self.set_values(filtered_values)
 
     def differentiate(self):
         """Differentiate the signal"""
 
         differentiated_signal = np.ediff1d(self.get_values())
-        for i in range(len(differentiated_signal)):
-            self.signal_samples[i][1] = differentiated_signal[i]
+        self.set_values(differentiated_signal)
 
     def square(self):
         """Squares the signal"""
 
         squared_signal = np.square(self.get_values())
-        for i in range(len(squared_signal)):
-            self.signal_samples[i][1] = squared_signal[i]
+        self.set_values(squared_signal)
 
     def moving_window_integration(self, attr):
         """Integrate the signal with moving frame of the given length
@@ -159,9 +155,7 @@ class Signal:
         length_of_window = attr["lengthOfWindow"]
 
         integrated_signal = np.convolve(self.get_values(), np.ones(length_of_window))
-
-        for i in range(len(self.signal_samples)):
-            self.signal_samples[i][1] = integrated_signal[i]
+        self.set_values(integrated_signal)
 
     def decimate(self, attr):
         """Decimates the signal
@@ -370,3 +364,18 @@ class Signal:
             values.append(self.signal_samples[iterator][1])
 
         return values
+
+    def set_values(self, new_values):
+        """Support method for setting new for the signal.
+            Since signal is made out of time stamps and corresponding values sometimes we just want to set new values
+        """
+        length_of_values = len(self.signal_samples)
+        length_of_new_values = len(new_values)
+
+        if length_of_values > length_of_new_values:
+            length_of_vector = length_of_new_values
+        else:
+            length_of_vector = length_of_values
+
+        for index in range(length_of_vector):
+            self.signal_samples[index][1] = new_values[index]
