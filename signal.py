@@ -27,12 +27,22 @@ class Signal:
 
             Methods
             -------
+            butterworth_filter(attr)
+                Creates and applies filter on the signal.
+            differentiate()
+                Differentiate the signal.
+            square()
+                Squares values of the signal.
+            moving_window_integration(attr)
+                Integrates the signal with moving window function.
             decimate(attr)
                 Decimates the signal.
             get_phase_part(attr)
                 Gets phase part of given signal.
             z_normalize()
                 Normalizes the signal.
+            smooth()
+                Smooths the signal by averaging the samples.
             draw_plot(window_name, title_name, x_name, y_name)
                 Plots the signal chart with specified names of window, title, x and y values.
             mean(attr)
@@ -75,6 +85,78 @@ class Signal:
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.features = []
 
+    def butterworth_filter(self, attr):
+        """Creating and using Butterworth digital filter
+
+           Parameters
+           ----------
+           attr : {}
+               The dictionary with attributes:
+               - samplingRate: int
+                    rate that the signal has been sampled with
+               - order: int
+                    order of created filter
+               - type: str
+                    type of created filter. Available types:
+                        'lowpass',
+                        'highpass'
+                        'bandpass'
+                        'bandstop'
+               - cut_of_freq: int | [int, int]
+                    an array or a scalar of cut of frequencies that will be aplied to the filter
+                        Scalar for 'lowpass' and 'highpass' filter.
+                        Array for 'bandpass' and 'bandstop' filter.
+           """
+
+        order = attr["order"]
+        freq = attr["samplingRate"]
+        type = attr["type"]
+        cut_of_freq = attr["cutOfFrequencies"]
+
+        nyquist_freq = 0.5 * freq
+
+        """Normalization of frequency values by the Nyquist frequency f = f / fn"""
+        if isinstance(cut_of_freq, list):
+            cut_of_freq = [elem / nyquist_freq for elem in cut_of_freq]
+        else:
+            cut_of_freq = cut_of_freq / nyquist_freq
+
+        """Creating coefficients of the filter"""
+        b, a = ss.butter(order, cut_of_freq, btype=type, analog=False)
+
+        """Applying created filter's coefficients to the signal.Filtered signal is applied only to the values of the signal. 
+             It did not changed the timestamps."""
+        filtered_values = ss.lfilter(b, a, self.get_values())
+        self.set_values(filtered_values)
+
+    def differentiate(self):
+        """Differentiate the signal"""
+
+        differentiated_signal = np.ediff1d(self.get_values())
+        self.set_values(differentiated_signal)
+
+    def square(self):
+        """Squares the signal"""
+
+        squared_signal = np.square(self.get_values())
+        self.set_values(squared_signal)
+
+    def moving_window_integration(self, attr):
+        """Integrate the signal with moving frame of the given length
+
+           Parameters
+           ----------
+           attr : {}
+               The dictionary with attributes:
+               - lengthOfWindow: int
+                    length of the moving window
+           """
+
+        length_of_window = attr["lengthOfWindow"]
+
+        integrated_signal = np.convolve(self.get_values(), np.ones(length_of_window))
+        self.set_values(integrated_signal)
+
     def decimate(self, attr):
         """Decimates the signal
 
@@ -82,9 +164,10 @@ class Signal:
            ----------
            attr : {}
                The dictionary with attributes:
-               - "samplingFrequency" is frequency with which signal was sampled
-               - "goalFrequency" is goal frequency with which signal should be sampled
-
+               - samplingFrequency: int
+                    frequency with which signal was sampled
+               - goalFrequency: int
+                    goal frequency with which signal should be sampled
            """
 
         ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
@@ -97,13 +180,14 @@ class Signal:
             ----------
             attr : {}
                 The dictionary with attributes:
-                - "deg" is degree of the polynomial that will estimate the data baseline - default is 10
-                - "maxIt" is maximum number of iterations to perform for baseline function - default is 100
-
+                - deg: int
+                    degree of the polynomial that will estimate the data baseline - default is 10
+                - maxIt: int
+                    maximum number of iterations to perform for baseline function - default is 100
             """
 
         baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
-        self.signal_samples[:, 1] = [(j-p) for j, p in zip(self.signal_samples[:, 1], baseline)]
+        self.signal_samples[:, 1] = [(j - p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
     def z_normalize(self):
         """Normalizes the signal."""
@@ -124,8 +208,8 @@ class Signal:
             ----------
             attr : {}
                 The dictionary with attribute:
-                - "numberOfIterations" - The number of iterations for the sample smoothing algorithm.
-
+                - numberOfIterations: int
+                    The number of iterations for the sample smoothing algorithm.
         """
 
         "We start indexing at 2 because the algorithm needs the previous two samples of the signal to work properly."
@@ -137,7 +221,8 @@ class Signal:
         value_of_signal = 1
         for j in range(int(attr["numberOfIterations"])):
             for i in range(starting_index, len(self.signal_samples)):
-                self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] + self.signal_samples[i][value_of_signal]) / 2
+                self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] +
+                                                               self.signal_samples[i][value_of_signal]) / 2
 
     def draw_plot(self, window_name, title_name, x_name, y_name):
         """Plots the signal chart with specified names of window, title, x and y values.
@@ -279,3 +364,18 @@ class Signal:
             values.append(self.signal_samples[iterator][1])
 
         return values
+
+    def set_values(self, new_values):
+        """Support method for setting new for the signal.
+            Since signal is made out of time stamps and corresponding values sometimes we just want to set new values
+        """
+        length_of_values = len(self.signal_samples)
+        length_of_new_values = len(new_values)
+
+        if length_of_values > length_of_new_values:
+            length_of_vector = length_of_new_values
+        else:
+            length_of_vector = length_of_values
+
+        for index in range(length_of_vector):
+            self.signal_samples[index][1] = new_values[index]

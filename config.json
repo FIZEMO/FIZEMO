@@ -1,4 +1,122 @@
 {
+  "Scenariusz ECG_0": [
+    {
+      "signalFileName": "ECG_1",
+      "signalType": "ECG",
+      "methods": []
+    }
+  ],
+   "Scenariusz ECG_1": [
+    {
+      "signalFileName": "ECG_1",
+      "signalType": "ECG",
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 2,
+          "attributes": {
+            "order": 5,
+            "samplingRate": 250,
+            "type": "bandpass",
+            "cutOfFrequencies": [
+              5,
+              15
+            ]
+          }
+        }
+      ]
+    }
+  ],
+   "Scenariusz ECG_2": [
+    {
+      "signalFileName": "ECG_1",
+      "signalType": "ECG",
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 2,
+          "attributes": {
+            "order": 5,
+            "samplingRate": 250,
+            "type": "bandpass",
+            "cutOfFrequencies": [
+              5,
+              15
+            ]
+          }
+        },
+        {
+          "functionName": "differentiate",
+          "order": 3
+        }
+      ]
+    }
+  ],
+   "Scenariusz ECG_3": [
+    {
+      "signalFileName": "ECG_1",
+      "signalType": "ECG",
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 2,
+          "attributes": {
+            "order": 5,
+            "samplingRate": 250,
+            "type": "bandpass",
+            "cutOfFrequencies": [
+              5,
+              15
+            ]
+          }
+        },
+        {
+          "functionName": "differentiate",
+          "order": 3
+        },
+        {
+          "functionName": "square",
+          "order": 4
+        }
+      ]
+    }
+  ],
+  "Scenariusz ECG_4": [
+    {
+      "signalFileName": "ECG_1",
+      "signalType": "ECG",
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 2,
+          "attributes": {
+            "order": 5,
+            "samplingRate": 250,
+            "type": "bandpass",
+            "cutOfFrequencies": [
+              5,
+              15
+            ]
+          }
+        },
+        {
+          "functionName": "differentiate",
+          "order": 3
+        },
+        {
+          "functionName": "square",
+          "order": 4
+        },
+        {
+          "functionName": "moving_window_integration",
+          "order": 5,
+          "attributes": {
+            "lengthOfWindow": 15
+          }
+        }
+      ]
+    }
+  ],
   "Scenariusz 1": [
     {
       "signalFileName": "rawGSR",
