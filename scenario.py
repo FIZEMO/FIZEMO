@@ -1,5 +1,6 @@
 import csv
 import os
+import numpy as np
 from datetime import datetime
 from signal import Signal
 from operator import itemgetter
@@ -35,7 +36,7 @@ class Scenario:
             Writes processed signal to the csv file.
         """
 
-    def __init__(self, scenario_name, signal_file_name, signal_type, methods):
+    def __init__(self, scenario_name, signal_file_name, signal_type, methods, windowing_attr=None):
         """Initialization of the Scenario object
 
             Parameters
@@ -53,7 +54,8 @@ class Scenario:
             """
         self.scenario_name = scenario_name
         self.processing_methods = methods
-        self.processed_signal = Signal(signal_file_name, signal_type)
+        self.processed_signal = Signal(signal_file_name, signal_type, windowing_attr)
+        self.processing_info = {}
 
     def sort_methods_by_order(self):
         """Sorts methods in the scenario by their order"""
@@ -66,8 +68,9 @@ class Scenario:
         self.sort_methods_by_order()
         for method in self.processing_methods:
             method_to_call = getattr(self.processed_signal, method["functionName"])
+            self.processing_info[method["order"]] = method["functionName"]
             if method.get("attributes") is None and method.get("outputLabel") is None:
-              method_to_call()
+                method_to_call()
             elif method.get("outputLabel") is None:
                 method_to_call(method["attributes"])
             else:
@@ -102,9 +105,13 @@ class Scenario:
         if self.processed_signal.features.__len__() > 0:
             with open("./results/features/" + file_name + ".csv", 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
-                csv_writer.writerow(['Feature', 'Value'])
-                for element in self.processed_signal.features:
-                    csv_writer.writerow(element)
+                self.setup_csv_header(csv_writer)
+                csv_writer.writerow([x[0] for x in self.processed_signal.features])
+                feature_values = [x[1] for x in self.processed_signal.features]
+                feature_values = np.array(feature_values)
+                feature_values = feature_values.transpose()
+                for row in feature_values:
+                    csv_writer.writerow(row)
 
     def save_signal_csv(self, file_name):
         """Writes processed signal to the csv file
@@ -121,3 +128,20 @@ class Scenario:
             csv_writer = csv.writer(csv_file)
             for element in self.processed_signal.signal_samples:
                 csv_writer.writerow(element)
+
+    def setup_csv_header(self, csv_writer):
+        header = [str(x) + "=" + str(y) for x, y in self.processing_info.items()]
+        scenario_info = "Signal type: " + self.processed_signal.signal_type + " | Windowing: "
+        if self.processed_signal.windowing_attributes is None:
+            scenario_info += "OFF"
+        else:
+            scenario_info += "length=" + str(self.processed_signal.windowing_attributes["length"]) + \
+                             " slide=" + str(self.processed_signal.windowing_attributes["slide"])
+
+        header = ' '.join(header)
+        csv_writer.writerow(["-" * len(header)])
+        csv_writer.writerow(["Scenario information: "])
+        csv_writer.writerow([scenario_info])
+        csv_writer.writerow(["Order of processing methods: "])
+        csv_writer.writerow([header])
+        csv_writer.writerow(["-" * len(header)])
