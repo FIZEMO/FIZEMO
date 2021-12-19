@@ -113,6 +113,16 @@
           "attributes": {
             "lengthOfWindow": 15
           }
+        },
+        {
+          "functionName": "mean",
+          "order": 6,
+          "outputLabel": "Średnia"
+        },
+        {
+          "functionName": "median",
+          "order": 7,
+          "outputLabel": "Mediana"
         }
       ]
     }

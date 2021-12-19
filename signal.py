@@ -193,8 +193,8 @@ class Signal:
     def z_normalize(self):
         """Normalizes the signal."""
 
-        mean = np.mean(self.get_signal_values())
-        variance = np.var(self.get_signal_values())
+        mean = np.mean(self.get_values())
+        variance = np.var(self.get_values())
 
         for i, (timestamps, values) in enumerate(self.signal_samples):
             values = (values - mean) / variance
@@ -258,7 +258,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(np.mean(window))
@@ -275,7 +275,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(np.median(window))
@@ -293,7 +293,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(np.std(window))
@@ -310,7 +310,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(np.min(window))
@@ -327,7 +327,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(np.max(window))
@@ -344,7 +344,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(np.var(window))
@@ -361,7 +361,7 @@ class Signal:
 
            """
 
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(stat.kurtosis(window))
@@ -377,14 +377,19 @@ class Signal:
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
 
            """
-        signal_values = self.get_values_for_features()
+        signal_values = self.get_windowed_values()
         feature_values = list()
         for window in signal_values:
             feature_values.append(stat.skew(window))
 
         self.features.append([attr, feature_values])
 
-    def get_signal_values(self):
+    def get_values(self):
+        """Support method to get values out of a sampled signal.
+                    Since signal is made out of time stamps and corresponding values sometimes we just want to use the values
+                    e.g: feature extraction.
+
+                """
 
         values_list = list()
         for iterator in range(len(self.signal_samples)):
@@ -392,23 +397,26 @@ class Signal:
 
         return values_list
 
-    def get_values_for_features(self):
-        """Support method to get values out of a sampled signal.
-            Since signal is made out of time stamps and corresponding values sometimes we just want to use the values
-            e.g: feature extraction.
-
-        """
-
+    def get_windowed_values(self):
+        """Method to get values out of a sampled signal and decide whether returned signal should be windowed or not.
+         Method returns a 2 dimensional array where each element represents a window with signal values if it is windowed
+         or it has only one element with whole signal if it is not windowed.
+                       """
         values = list()
 
         if self.windowing_attributes is None:
-            values.append(self.get_signal_values())
+            values.append(self.get_values())
         else:
             values = self.divide_into_windows()
 
         return values
 
     def divide_into_windows(self):
+        """Support method to get values out of a sampled signal and divide them into windows with attributes -
+                    length of window and slide - selected by user in configuration file. Method returns a 2 dimensional array where each element
+                        represents a window with signal values.
+                               """
+
         values = list()
 
         window_start = self.signal_samples[0, 0]
