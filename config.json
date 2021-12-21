@@ -116,13 +116,64 @@
         },
         {
           "functionName": "mean",
-          "order": 6,
+          "order": 7,
           "outputLabel": "Średnia"
         },
         {
           "functionName": "median",
-          "order": 7,
+          "order": 8,
           "outputLabel": "Mediana"
+        }
+      ]
+    }
+  ],
+  "Scenariusz ECG_5": [
+    {
+      "signalFileName": "ECG_2",
+      "signalType": "ECG",
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 2,
+          "attributes": {
+            "order": 5,
+            "samplingRate": 250,
+            "type": "bandpass",
+            "cutOfFrequencies": [
+              5,
+              15
+            ]
+          }
+        },
+        {
+          "functionName": "differentiate",
+          "order": 3
+        },
+        {
+          "functionName": "square",
+          "order": 4
+        },
+        {
+          "functionName": "moving_window_integration",
+          "order": 5,
+          "attributes": {
+            "lengthOfWindow": 15
+          }
+        },
+        {
+          "functionName": "calculate_r_peaks_distance",
+          "order": 6,
+          "attributes": {
+            "samplingRate": 250
+          }
+        },
+        {
+          "functionName": "get_poincare_parameters",
+          "order": 7
+        },
+        {
+          "functionName": "get_psd_parameters",
+          "order": 8
         }
       ]
     }
