@@ -36,7 +36,7 @@ class Scenario:
             Writes processed signal to the csv file.
         """
 
-    def __init__(self, scenario_name, signal_file_name, signal_type, methods, windowing_attr=None):
+    def __init__(self, scenario_name, signal_file_name, signal_type, methods, columns, options=None, windowing_attr=None):
         """Initialization of the Scenario object
 
             Parameters
@@ -48,13 +48,16 @@ class Scenario:
             signal_type : str
                 type of signal
                 it has to be included in the list of available types of the signal (manual.txt)
+            options : dict
+                options for scenario (whether save processed signal or draw plot)
             methods : list
                 The list of signal's processing methods with their attributes
 
             """
         self.scenario_name = scenario_name
         self.processing_methods = methods
-        self.processed_signal = Signal(signal_file_name, signal_type, windowing_attr)
+        self.options = options
+        self.processed_signal = Signal(signal_file_name, signal_type, columns, windowing_attr)
         self.processing_info = {}
 
     def sort_methods_by_order(self):
@@ -77,7 +80,7 @@ class Scenario:
                 method_to_call(method["outputLabel"])
 
     def save_results(self):
-        """Writes extracted features and processed signal to separate .csv files"""
+        """Writes extracted features and processed signal (if selected) to separate .csv files"""
 
         date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
         features_file_name = self.scenario_name + " " + date
@@ -89,7 +92,10 @@ class Scenario:
             os.makedirs("./results/signals")
 
         self.save_feature_csv(features_file_name)
-        self.save_signal_csv(signal_file_name)
+
+        if self.options is None or "save_processed_signal" not in self.options \
+                or self.options["save_processed_signal"].lower() == "true":
+            self.save_signal_csv(signal_file_name)
 
     def save_feature_csv(self, file_name):
         """Writes extracted features to the csv file and call function to write the processed signal to csv file

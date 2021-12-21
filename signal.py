@@ -65,7 +65,7 @@ class Signal:
                 Support method to get signal values out of a sampled signal.
             """
 
-    def __init__(self, signal_file_name, signal_type, windowing_attr=None):
+    def __init__(self, signal_file_name, signal_type, columns, windowing_attr=None):
         """Initialization of the Signal object which include loading the signal from .csv file and
             saving it as signal_samples property
 
@@ -81,6 +81,12 @@ class Signal:
 
         path = './signals/' + signal_file_name + '.csv'
         pandas_data_framed_signal = pd.read_csv(r'' + path)
+        columns_names = pandas_data_framed_signal.columns
+        columns_selected = list()
+        columns_selected.append(columns_names[columns["timestamp"]-1])
+        columns_selected.append(columns_names[columns["values"]-1])
+
+        pandas_data_framed_signal = pandas_data_framed_signal[columns_selected]
         self.signal_type = signal_type
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.windowing_attributes = windowing_attr
@@ -411,6 +417,28 @@ class Signal:
 
         return values
 
+    def get_window_timestamps(self):
+        """Support method to get timestamps out of a sampled signal and divide them into windows timestamps.
+                                       """
+        timestamps = list()
+
+        window_start = self.signal_samples[0, 0]
+        window_stop = window_start + self.windowing_attributes["length"]
+        timestamps.append([window_start, window_stop])
+
+        while True:
+            window_start += self.windowing_attributes["slide"]
+            window_stop += self.windowing_attributes["slide"]
+            if window_stop > self.signal_samples[-1, 0]:
+                break
+            timestamps.append([window_start, window_stop])
+
+        if len(self.features) == 0:
+            start_timestamps = [x[0] for x in timestamps]
+            self.features.append(["Start Window Timestamp", start_timestamps])
+
+        return timestamps
+
     def divide_into_windows(self):
         """Support method to get values out of a sampled signal and divide them into windows with attributes -
                     length of window and slide - selected by user in configuration file. Method returns a 2 dimensional array where each element
@@ -418,22 +446,11 @@ class Signal:
                                """
 
         values = list()
+        timestamps = self.get_window_timestamps()
 
-        window_start = self.signal_samples[0, 0]
-        window_stop = window_start + self.windowing_attributes["length"]
-
-        left_condition = self.signal_samples[:, 0] >= window_start
-        right_condition = self.signal_samples[:, 0] <= window_stop
-
-        wind = self.signal_samples[left_condition & right_condition].tolist()
-        values.append([x[1] for x in wind])
-
-        while True:
-            window_start += self.windowing_attributes["slide"]
-            window_stop += self.windowing_attributes["slide"]
-
-            if window_stop > self.signal_samples[-1, 0]:
-                break
+        for window in timestamps:
+            window_start = window[0]
+            window_stop = window[1]
 
             left_condition = self.signal_samples[:, 0] >= window_start
             right_condition = self.signal_samples[:, 0] <= window_stop
@@ -447,6 +464,7 @@ class Signal:
         """Support method for setting new for the signal.
             Since signal is made out of time stamps and corresponding values sometimes we just want to set new values
         """
+
         length_of_values = len(self.signal_samples)
         length_of_new_values = len(new_values)
 

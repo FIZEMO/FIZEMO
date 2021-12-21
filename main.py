@@ -1,4 +1,6 @@
 import json
+import sys
+
 from scenario import Scenario
 
 """ 
@@ -56,17 +58,34 @@ def convert_json_to_object_list(json_tup_scenarios_list):
 
     scenarios = []
     for scenario in json_tup_scenarios_list:
-        if scenario[DICTIONARY].get("windowing") is not None:
+        if scenario[DICTIONARY].get("windowing") is not None and scenario[DICTIONARY].get("options") is not None:
             scenario_object = Scenario(scenario[SCENARIO_NAME],
                                        scenario[DICTIONARY]["signalFileName"],
                                        scenario[DICTIONARY]["signalType"],
                                        scenario[DICTIONARY]["methods"],
-                                       scenario[DICTIONARY]["windowing"])
+                                       scenario[DICTIONARY]["columns_to_read"],
+                                       options=scenario[DICTIONARY]["options"],
+                                       windowing_attr=scenario[DICTIONARY]["windowing"])
+        elif scenario[DICTIONARY].get("options") is not None:
+            scenario_object = Scenario(scenario[SCENARIO_NAME],
+                                       scenario[DICTIONARY]["signalFileName"],
+                                       scenario[DICTIONARY]["signalType"],
+                                       scenario[DICTIONARY]["methods"],
+                                       scenario[DICTIONARY]["columns_to_read"],
+                                       options=scenario[DICTIONARY]["options"])
+        elif scenario[DICTIONARY].get("windowing") is not None:
+            scenario_object = Scenario(scenario[SCENARIO_NAME],
+                                       scenario[DICTIONARY]["signalFileName"],
+                                       scenario[DICTIONARY]["signalType"],
+                                       scenario[DICTIONARY]["methods"],
+                                       scenario[DICTIONARY]["columns_to_read"],
+                                       windowing_attr=scenario[DICTIONARY]["windowing"])
         else:
             scenario_object = Scenario(scenario[SCENARIO_NAME],
                                        scenario[DICTIONARY]["signalFileName"],
                                        scenario[DICTIONARY]["signalType"],
-                                       scenario[DICTIONARY]["methods"])
+                                       scenario[DICTIONARY]["methods"],
+                                       scenario[DICTIONARY]["columns_to_read"])
 
         scenarios.append(scenario_object)
     return scenarios
@@ -98,13 +117,15 @@ def draw_all_signals(scenarios):
         """
 
     for scenario in scenarios:
-        title = "Processed " + str(scenario.processed_signal.signal_type) + " signal"
-        y = str(scenario.processed_signal.signal_type) + " value"
-        scenario.processed_signal.draw_plot(scenario.scenario_name, title, 'TimeStamp', y)
+        if scenario.options is None or "draw_plot" not in scenario.options \
+                or scenario.options["draw_plot"].lower() == "true":
+            title = "Processed " + str(scenario.processed_signal.signal_type) + " signal"
+            y = str(scenario.processed_signal.signal_type) + " value"
+            scenario.processed_signal.draw_plot(scenario.scenario_name, title, 'TimeStamp', y)
 
 
 #
-def main():
+def main(config_file_path):
     """MAIN SCRIPT
 
         Scenarios are loaded from .json file as list of tuples, next converted into list of Scenario objects.
@@ -112,12 +133,11 @@ def main():
         From each Scenario there is obtained a result .csv file with extracted features.
 
     """
-
-    tup_scenarios = load_config_file("./config.json")
+    tup_scenarios = load_config_file(config_file_path)
     scenarios = convert_json_to_object_list(tup_scenarios)
     process_scenarios(scenarios)
     draw_all_signals(scenarios)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])

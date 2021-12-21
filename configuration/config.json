@@ -1,8 +1,12 @@
 {
   "Scenariusz ECG_0": [
     {
-      "signalFileName": "ECG_1",
+      "signalFileName": "ECG_Clip1",
       "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 3},
+      "options": {
+        "save_processed_signal": "False"
+      },
       "methods": []
     }
   ],
@@ -10,6 +14,11 @@
     {
       "signalFileName": "ECG_1",
       "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "False"
+      },
       "methods": [
         {
           "functionName": "butterworth_filter",
@@ -31,6 +40,11 @@
     {
       "signalFileName": "ECG_1",
       "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "False"
+      },
       "methods": [
         {
           "functionName": "butterworth_filter",
@@ -56,6 +70,11 @@
     {
       "signalFileName": "ECG_1",
       "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "False"
+      },
       "methods": [
         {
           "functionName": "butterworth_filter",
@@ -85,6 +104,11 @@
     {
       "signalFileName": "ECG_1",
       "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "False"
+      },
       "methods": [
         {
           "functionName": "butterworth_filter",
@@ -131,6 +155,10 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "draw_plot": "False"
+      },
       "windowing": {"length": 1000, "slide": 500},
       "methods": [
         {
@@ -200,6 +228,10 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "save_processed_signal": "False"
+      },
       "methods": [
         {
           "functionName": "decimate",
@@ -251,6 +283,7 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
+      "columns_to_read": {"timestamp": 1, "values": 2},
       "methods": [
         {
           "functionName": "decimate",
