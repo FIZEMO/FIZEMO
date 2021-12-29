@@ -1,18 +1,14 @@
-from cmath import sqrt
-from statistics import mean, stdev
-
-import biosppy
-import pyhrv.nonlinear as nl
-import pyhrv.frequency_domain as fd
-
 import peakutils
-import scipy
 import scipy.signal as ss
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 import scipy.stats as stat
-
+from cmath import sqrt
+from statistics import mean, stdev
+import biosppy
+import pyhrv.nonlinear as nl
+import pyhrv.frequency_domain as fd
 
 
 class Signal:
@@ -30,8 +26,13 @@ class Signal:
             signal_type : str
                 the type of processed signal
                 it has to be included in the list of available types of the signal (manual.txt)
+            windowing_attributes : dict
+                Dictionary which contains information about the windowing, like: length of the window and its slide.
+                If set to None - there is no windowing included.
 
-            Methods
+
+
+            Methods for signal processing:
             -------
             butterworth_filter(attr)
                 Creates and applies filter on the signal.
@@ -49,8 +50,17 @@ class Signal:
                 Normalizes the signal.
             smooth()
                 Smooths the signal by averaging the samples.
-            draw_plot(window_name, title_name, x_name, y_name)
-                Plots the signal chart with specified names of window, title, x and y values.
+
+
+            Methods for feature extraction:
+            Additional information for programmers:
+            In all methods for feature extraction there is implemented a mechanism of extraction for windowed signal.
+            To add new method for feature extraction one need to:
+                I. Name the method in understandable way (the same name will be used in configuration file)
+                II. Set default attrubute name (for .csv) in passed parameter
+                III. Get windowed signal values with method "get_windowed_values()"
+                IV. Calculate feature for each window in the loop and save results in array
+            -------
             mean(attr)
                 Extracts mean value from the signal.
             median(attr)
@@ -67,11 +77,25 @@ class Signal:
                 Extracts kurtosis value from the signal.
             skewness(attr)
                 Extracts skewness value from the signal.
+
+
+            Other methods:
+            -------
+            draw_plot(window_name, title_name, x_name, y_name)
+                Plots the signal chart with specified names of window, title, x and y values.
             get_values()
                 Support method to get signal values out of a sampled signal.
+            get_windowed_values()
+                Method to get values out of a sampled signal and decide whether returned signal should be windowed or not.
+            get_window_timestamps()
+                Support method to get timestamps out of a sampled signal and divide them into windows timestamps.
+            divide_into_windows():
+                Support method to get values out of a sampled signal and divide them into windows
+            set_values(new_values)
+                Support method for setting new for the signal.
             """
 
-    def __init__(self, signal_file_name, signal_type, windowing_attr=None):
+    def __init__(self, signal_file_name, signal_type, columns, windowing_attr=None):
         """Initialization of the Signal object which include loading the signal from .csv file and
             saving it as signal_samples property
 
@@ -82,11 +106,23 @@ class Signal:
            signal_type : str
                type of signal
                it has to be included in the list of available types of the signal (manual.txt)
+           columns : dict
+               Dictionary which contains information about columns to read from .csv file with signal data
+                with specified: "timestamp" column number and "values" column number (values for the signal)
+           windowing_attr : dict
+                Dictionary which contains information about the windowing, like: length of the window and its slide.
+                If set to None - there is no windowing included.
 
            """
 
         path = './signals/' + signal_file_name + '.csv'
         pandas_data_framed_signal = pd.read_csv(r'' + path)
+        columns_names = pandas_data_framed_signal.columns
+        columns_selected = list()
+        columns_selected.append(columns_names[columns["timestamp"]-1])
+        columns_selected.append(columns_names[columns["values"]-1])
+
+        pandas_data_framed_signal = pandas_data_framed_signal[columns_selected]
         self.signal_type = signal_type
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.windowing_attributes = windowing_attr
@@ -103,7 +139,7 @@ class Signal:
                The dictionary with attributes:
                - samplingRate: int
                     rate that the signal has been sampled with
-               - order: int
+               - filterOrder: int
                     order of created filter
                - type: str
                     type of created filter. Available types:
@@ -117,7 +153,7 @@ class Signal:
                         Array for 'bandpass' and 'bandstop' filter.
            """
 
-        order = attr["order"]
+        order = attr["filterOrder"]
         freq = attr["samplingRate"]
         type = attr["type"]
         cut_of_freq = attr["cutOfFrequencies"]
@@ -178,8 +214,10 @@ class Signal:
                - goalFrequency: int
                     goal frequency with which signal should be sampled
            """
+        sampling_frequency = int(attr["samplingFrequency"])
+        goal_frequency = int(attr["goalFrequency"])
 
-        ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
+        ratio = int(sampling_frequency / goal_frequency)
         self.signal_samples = ss.decimate(self.signal_samples, ratio, 8, axis=0)
 
     def get_phase_part(self, attr):
@@ -190,12 +228,14 @@ class Signal:
             attr : {}
                 The dictionary with attributes:
                 - deg: int
-                    degree of the polynomial that will estimate the data baseline - default is 10
+                    degree of the polynomial that will estimate the data baseline - recommended is 10
                 - maxIt: int
-                    maximum number of iterations to perform for baseline function - default is 100
+                    maximum number of iterations to perform for baseline function - recommended is 100
             """
+        degree = attr["deg"]
+        max_iterations = attr["maxIt"]
 
-        baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
+        baseline = peakutils.baseline(self.signal_samples[:, 1], deg=degree, max_it=max_iterations)
         self.signal_samples[:, 1] = [(j - p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
     def z_normalize(self):
@@ -470,6 +510,28 @@ class Signal:
 
         return values
 
+    def get_window_timestamps(self):
+        """Support method to get timestamps out of a sampled signal and divide them into windows timestamps.
+                                       """
+        timestamps = list()
+
+        window_start = self.signal_samples[0, 0]
+        window_stop = window_start + self.windowing_attributes["length"]
+        timestamps.append([window_start, window_stop])
+
+        while True:
+            window_start += self.windowing_attributes["slide"]
+            window_stop += self.windowing_attributes["slide"]
+            if window_stop > self.signal_samples[-1, 0]:
+                break
+            timestamps.append([window_start, window_stop])
+
+        if len(self.features) == 0:
+            start_timestamps = [x[0] for x in timestamps]
+            self.features.append(["Start Window Timestamp", start_timestamps])
+
+        return timestamps
+
     def divide_into_windows(self):
         """Support method to get values out of a sampled signal and divide them into windows with attributes -
                     length of window and slide - selected by user in configuration file. Method returns a 2 dimensional array where each element
@@ -477,22 +539,11 @@ class Signal:
                                """
 
         values = list()
+        timestamps = self.get_window_timestamps()
 
-        window_start = self.signal_samples[0, 0]
-        window_stop = window_start + self.windowing_attributes["length"]
-
-        left_condition = self.signal_samples[:, 0] >= window_start
-        right_condition = self.signal_samples[:, 0] <= window_stop
-
-        wind = self.signal_samples[left_condition & right_condition].tolist()
-        values.append([x[1] for x in wind])
-
-        while True:
-            window_start += self.windowing_attributes["slide"]
-            window_stop += self.windowing_attributes["slide"]
-
-            if window_stop > self.signal_samples[-1, 0]:
-                break
+        for window in timestamps:
+            window_start = window[0]
+            window_stop = window[1]
 
             left_condition = self.signal_samples[:, 0] >= window_start
             right_condition = self.signal_samples[:, 0] <= window_stop
@@ -506,6 +557,7 @@ class Signal:
         """Support method for setting new for the signal.
             Since signal is made out of time stamps and corresponding values sometimes we just want to set new values
         """
+
         length_of_values = len(self.signal_samples)
         length_of_new_values = len(new_values)
 
