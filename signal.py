@@ -25,7 +25,8 @@ class Signal:
                 the type of processed signal
                 it has to be included in the list of available types of the signal (manual.txt)
 
-            Methods
+
+            Methods for signal processing:
             -------
             butterworth_filter(attr)
                 Creates and applies filter on the signal.
@@ -43,8 +44,17 @@ class Signal:
                 Normalizes the signal.
             smooth()
                 Smooths the signal by averaging the samples.
-            draw_plot(window_name, title_name, x_name, y_name)
-                Plots the signal chart with specified names of window, title, x and y values.
+
+
+            Methods for feature extraction:
+            Additional information for programmers:
+            In all methods for feature extraction there is implemented a mechanism of extraction for windowed signal.
+            To add new method for feature extraction one need to:
+                I. Name the method in understandable way (the same name will be used in configuration file)
+                II. Set default attrubute name (for .csv) in passed parameter
+                III. Get windowed signal values with method "get_windowed_values()"
+                IV. Calculate feature for each window in the loop and save results in array
+            -------
             mean(attr)
                 Extracts mean value from the signal.
             median(attr)
@@ -61,8 +71,22 @@ class Signal:
                 Extracts kurtosis value from the signal.
             skewness(attr)
                 Extracts skewness value from the signal.
+
+
+            Other methods:
+            -------
+            draw_plot(window_name, title_name, x_name, y_name)
+                Plots the signal chart with specified names of window, title, x and y values.
             get_values()
                 Support method to get signal values out of a sampled signal.
+            get_windowed_values()
+                Method to get values out of a sampled signal and decide whether returned signal should be windowed or not.
+            get_window_timestamps()
+                Support method to get timestamps out of a sampled signal and divide them into windows timestamps.
+            divide_into_windows():
+                Support method to get values out of a sampled signal and divide them into windows
+            set_values(new_values)
+                Support method for setting new for the signal.
             """
 
     def __init__(self, signal_file_name, signal_type, columns, windowing_attr=None):
@@ -101,7 +125,7 @@ class Signal:
                The dictionary with attributes:
                - samplingRate: int
                     rate that the signal has been sampled with
-               - order: int
+               - filterOrder: int
                     order of created filter
                - type: str
                     type of created filter. Available types:
@@ -115,7 +139,7 @@ class Signal:
                         Array for 'bandpass' and 'bandstop' filter.
            """
 
-        order = attr["order"]
+        order = attr["filterOrder"]
         freq = attr["samplingRate"]
         type = attr["type"]
         cut_of_freq = attr["cutOfFrequencies"]
@@ -176,8 +200,10 @@ class Signal:
                - goalFrequency: int
                     goal frequency with which signal should be sampled
            """
+        sampling_frequency = int(attr["samplingFrequency"])
+        goal_frequency = int(attr["goalFrequency"])
 
-        ratio = int(int(attr["samplingFrequency"]) / int(attr["goalFrequency"]))
+        ratio = int(sampling_frequency / goal_frequency)
         self.signal_samples = ss.decimate(self.signal_samples, ratio, 8, axis=0)
 
     def get_phase_part(self, attr):
@@ -188,12 +214,14 @@ class Signal:
             attr : {}
                 The dictionary with attributes:
                 - deg: int
-                    degree of the polynomial that will estimate the data baseline - default is 10
+                    degree of the polynomial that will estimate the data baseline - recommended is 10
                 - maxIt: int
-                    maximum number of iterations to perform for baseline function - default is 100
+                    maximum number of iterations to perform for baseline function - recommended is 100
             """
+        degree = attr["deg"]
+        max_iterations = attr["maxIt"]
 
-        baseline = peakutils.baseline(self.signal_samples[:, 1], deg=attr["deg"], max_it=attr["maxIt"])
+        baseline = peakutils.baseline(self.signal_samples[:, 1], deg=degree, max_it=max_iterations)
         self.signal_samples[:, 1] = [(j - p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
     def z_normalize(self):

@@ -36,7 +36,7 @@ class Scenario:
             Writes processed signal to the csv file.
         """
 
-    def __init__(self, scenario_name, signal_file_name, signal_type, methods, columns, options=None, windowing_attr=None):
+    def __init__(self, scenario_name, signal_file_name, signal_type, methods, columns, **kwargs):
         """Initialization of the Scenario object
 
             Parameters
@@ -56,8 +56,15 @@ class Scenario:
             """
         self.scenario_name = scenario_name
         self.processing_methods = methods
-        self.options = options
-        self.processed_signal = Signal(signal_file_name, signal_type, columns, windowing_attr)
+        self.options = None
+        windowing = None
+        for key, item in kwargs.items():
+            if key == "options":
+                self.options = item
+            elif key == "windowing_attr":
+                windowing = item
+
+        self.processed_signal = Signal(signal_file_name, signal_type, columns, windowing)
         self.processing_info = {}
 
     def sort_methods_by_order(self):

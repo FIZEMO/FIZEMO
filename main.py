@@ -58,34 +58,13 @@ def convert_json_to_object_list(json_tup_scenarios_list):
 
     scenarios = []
     for scenario in json_tup_scenarios_list:
-        if scenario[DICTIONARY].get("windowing") is not None and scenario[DICTIONARY].get("options") is not None:
-            scenario_object = Scenario(scenario[SCENARIO_NAME],
-                                       scenario[DICTIONARY]["signalFileName"],
-                                       scenario[DICTIONARY]["signalType"],
-                                       scenario[DICTIONARY]["methods"],
-                                       scenario[DICTIONARY]["columns_to_read"],
-                                       options=scenario[DICTIONARY]["options"],
-                                       windowing_attr=scenario[DICTIONARY]["windowing"])
-        elif scenario[DICTIONARY].get("options") is not None:
-            scenario_object = Scenario(scenario[SCENARIO_NAME],
-                                       scenario[DICTIONARY]["signalFileName"],
-                                       scenario[DICTIONARY]["signalType"],
-                                       scenario[DICTIONARY]["methods"],
-                                       scenario[DICTIONARY]["columns_to_read"],
-                                       options=scenario[DICTIONARY]["options"])
-        elif scenario[DICTIONARY].get("windowing") is not None:
-            scenario_object = Scenario(scenario[SCENARIO_NAME],
-                                       scenario[DICTIONARY]["signalFileName"],
-                                       scenario[DICTIONARY]["signalType"],
-                                       scenario[DICTIONARY]["methods"],
-                                       scenario[DICTIONARY]["columns_to_read"],
-                                       windowing_attr=scenario[DICTIONARY]["windowing"])
-        else:
-            scenario_object = Scenario(scenario[SCENARIO_NAME],
-                                       scenario[DICTIONARY]["signalFileName"],
-                                       scenario[DICTIONARY]["signalType"],
-                                       scenario[DICTIONARY]["methods"],
-                                       scenario[DICTIONARY]["columns_to_read"])
+        scenario_object = Scenario(scenario[SCENARIO_NAME],
+                                   scenario[DICTIONARY]["signalFileName"],
+                                   scenario[DICTIONARY]["signalType"],
+                                   scenario[DICTIONARY]["methods"],
+                                   scenario[DICTIONARY]["columns_to_read"],
+                                   options=scenario[DICTIONARY].get("options", None),
+                                   windowing_attr=scenario[DICTIONARY].get("windowing", None))
 
         scenarios.append(scenario_object)
     return scenarios
@@ -130,7 +109,9 @@ def main(config_file_path):
 
         Scenarios are loaded from .json file as list of tuples, next converted into list of Scenario objects.
         Each Scenario has Signal object which is processed with methods described in the configuration file.
-        From each Scenario there is obtained a result .csv file with extracted features.
+        From each Scenario, which contains feature extraction, there is obtained a result .csv file
+        with extracted features and optionally .csv file with processed signal. In the last step there are drawn all the
+        processed signals which were chosen by user to print (in configuration file).
 
     """
     tup_scenarios = load_config_file(config_file_path)

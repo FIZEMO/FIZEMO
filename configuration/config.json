@@ -24,7 +24,7 @@
           "functionName": "butterworth_filter",
           "order": 2,
           "attributes": {
-            "order": 5,
+            "filterOrder": 5,
             "samplingRate": 250,
             "type": "bandpass",
             "cutOfFrequencies": [
@@ -50,7 +50,7 @@
           "functionName": "butterworth_filter",
           "order": 2,
           "attributes": {
-            "order": 5,
+            "filterOrder": 5,
             "samplingRate": 250,
             "type": "bandpass",
             "cutOfFrequencies": [
@@ -80,7 +80,7 @@
           "functionName": "butterworth_filter",
           "order": 2,
           "attributes": {
-            "order": 5,
+            "filterOrder": 5,
             "samplingRate": 250,
             "type": "bandpass",
             "cutOfFrequencies": [
@@ -114,7 +114,7 @@
           "functionName": "butterworth_filter",
           "order": 2,
           "attributes": {
-            "order": 5,
+            "filterOrder": 5,
             "samplingRate": 250,
             "type": "bandpass",
             "cutOfFrequencies": [
