@@ -5,6 +5,8 @@ from datetime import datetime
 from signal import Signal
 from operator import itemgetter
 
+from signalTypes.PeriodicSignal import PeriodicSignal
+
 
 class Scenario:
     """
@@ -79,7 +81,17 @@ class Scenario:
             elif key == "windowing_attr":
                 windowing = item
 
-        self.processed_signal = Signal(signal_file_name, signal_type, columns, windowing)
+        # periodic_signals is a dictionary containing all periodic signal types;
+        # If in the future there is implemented new signal type which could use methods available in this class -
+        # it should be added to this array
+        periodic_signals = ['ECG']
+        self.scenario_name = scenario_name
+        self.processing_methods = methods
+        if signal_type in periodic_signals:
+            self.processed_signal = PeriodicSignal(signal_file_name, signal_type, columns, windowing)
+        else:
+            self.processed_signal = Signal(signal_file_name, signal_type, columns, windowing)
+
         self.processing_info = {}
 
     def sort_methods_by_order(self):
