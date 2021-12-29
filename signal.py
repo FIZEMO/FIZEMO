@@ -1,6 +1,3 @@
-import csv
-from datetime import datetime
-
 import peakutils
 import scipy.signal as ss
 from matplotlib import pyplot as plt
@@ -24,6 +21,10 @@ class Signal:
             signal_type : str
                 the type of processed signal
                 it has to be included in the list of available types of the signal (manual.txt)
+            windowing_attributes : dict
+                Dictionary which contains information about the windowing, like: length of the window and its slide.
+                If set to None - there is no windowing included.
+
 
 
             Methods for signal processing:
@@ -100,6 +101,12 @@ class Signal:
            signal_type : str
                type of signal
                it has to be included in the list of available types of the signal (manual.txt)
+           columns : dict
+               Dictionary which contains information about columns to read from .csv file with signal data
+                with specified: "timestamp" column number and "values" column number (values for the signal)
+           windowing_attr : dict
+                Dictionary which contains information about the windowing, like: length of the window and its slide.
+                If set to None - there is no windowing included.
 
            """
 

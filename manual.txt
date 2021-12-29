@@ -17,6 +17,8 @@
     If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
     and I'm sure things will lighten up.
 
+    Examples of configuration files are placed in ./configuration folder.
+
 2. HOW TO RUN THE PROGRAM
     a. Download the program from GitHub TU_LINK
     b. Program was tested with Python 3.8.9 version. It is a recommended version.
@@ -40,6 +42,9 @@
     e. "options" - dictionary which may contain two elements (both optional):
         * "save_processed_signal" - if set to "False" the program doesn't save the .csv file with processed signal; if this field is not specified, the default value is "True"
         * "draw_plot": "False" - if set to "False" the program doesn't plot the processed signal; if this field is not specified, the default value is "True"
+    f. "windowing_attr" - dictionary which contains:
+        * "length" - the length of the window
+        * "slide" - the slide of the window (windows can overlap)
 
 3. AVAILABLE TYPES OF SIGNAL
     a. GSR (Galvanic Skin Response)

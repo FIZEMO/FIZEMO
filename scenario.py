@@ -21,6 +21,12 @@ class Scenario:
         processing_methods : list
             list of methods with attributes and parameters used for signal processing
             which are taken from JSON configuration file
+        options : dict
+            dictionary with configuration options for scenario, like:
+            "draw_plot": whether to draw a plot with processed signal
+            "save_processed_signal": save processed signal to .csv file
+        processing_info : dict
+            Information about order and type of processing to write in header of .csv file with extracted features
 
         Methods
         -------
@@ -34,6 +40,9 @@ class Scenario:
             Writes extracted features to the csv file and call function to write the processed signal to csv file.
         save_signal_csv()
             Writes processed signal to the csv file.
+        setup_csv_header()
+            Support method for adding the header to .csv file with extracted features.
+            The header contains information about order and type of processing methods used on the signal.
         """
 
     def __init__(self, scenario_name, signal_file_name, signal_type, methods, columns, **kwargs):
@@ -48,10 +57,16 @@ class Scenario:
             signal_type : str
                 type of signal
                 it has to be included in the list of available types of the signal (manual.txt)
-            options : dict
-                options for scenario (whether save processed signal or draw plot)
             methods : list
                 The list of signal's processing methods with their attributes
+            columns : dict
+                Dictionary which contains information about columns to read from .csv file with signal data
+                with specified: "timestamp" column number and "values" column number (values for the signal)
+            kwargs : {}
+                Dictionary with optional "options" and "windowing_attr" parameters.
+                options - dictionary with configuration options for scenario, like:
+                            whether to draw a plot with processed signal or save processed signal to .csv file
+                windowing_attr - dictionary which contains information about the windowing, like: length of the window and its slide.
 
             """
         self.scenario_name = scenario_name
@@ -143,6 +158,15 @@ class Scenario:
                 csv_writer.writerow(element)
 
     def setup_csv_header(self, csv_writer):
+        """
+            Support method for adding the header to .csv file with extracted features.
+            The header contains information about order and type of processing methods used on the signal.
+
+            Parameters
+           ----------
+           csv_writer : Writer
+                Csv writer object used for writing to .csv file
+        """
         header = [str(x) + "=" + str(y) for x, y in self.processing_info.items()]
         scenario_info = "Signal type: " + self.processed_signal.signal_type + " | Windowing: "
         if self.processed_signal.windowing_attributes is None:
