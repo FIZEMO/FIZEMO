@@ -1,0 +1,17 @@
+{
+  "Scenariusz ECG_0": [
+    {
+      "signalFileName": "ECG_Clip1",
+      "signalType": "ECG",
+      "columns_to_read": {
+        "timestamp": 1,
+        "values": 3
+      },
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "True"
+      },
+      "methods": []
+    }
+  ]
+}
