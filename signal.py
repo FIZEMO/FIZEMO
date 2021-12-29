@@ -1,14 +1,12 @@
 import peakutils
+
 import scipy.signal as ss
+import scipy.stats as stat
+
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
-import scipy.stats as stat
-from cmath import sqrt
-from statistics import mean, stdev
-import biosppy
-import pyhrv.nonlinear as nl
-import pyhrv.frequency_domain as fd
+
 
 
 class Signal:
@@ -127,8 +125,6 @@ class Signal:
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.windowing_attributes = windowing_attr
         self.features = []
-        self.r_peaks = []
-        self.r_peaks_distance = []
 
     def butterworth_filter(self, attr):
         """Creating and using Butterworth digital filter
@@ -148,7 +144,7 @@ class Signal:
                         'bandpass'
                         'bandstop'
                - cut_of_freq: int | [int, int]
-                    an array or a scalar of cut of frequencies that will be aplied to the filter
+                    an array or a scalar of cut of frequencies that will be applied to the filter
                         Scalar for 'lowpass' and 'highpass' filter.
                         Array for 'bandpass' and 'bandstop' filter.
            """
@@ -177,7 +173,7 @@ class Signal:
     def differentiate(self):
         """Differentiate the signal"""
 
-        differentiated_signal = np.ediff1d(self.get_values())
+        differentiated_signal = np.diff(self.get_values())
         self.set_values(differentiated_signal)
 
     def square(self):
@@ -247,57 +243,6 @@ class Signal:
         for i, (timestamps, values) in enumerate(self.signal_samples):
             values = (values - mean) / variance
             self.signal_samples[i][1] = values
-
-
-    def find_r_peaks(self, attr):
-        """Get R peaks coordinates"""
-        rpeaks = biosppy.signals.ecg.ecg(self.get_values(), sampling_rate=int(attr["samplingRate"]))
-        self.r_peaks = self.signal_samples[rpeaks[2]]/int(attr["samplingRate"])
-
-        plt.figure("test")
-        plt.title("test")
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.plot(self.signal_samples[:, 0], self.signal_samples[:, 1])
-        plt.plot(self.signal_samples[rpeaks[2], 0], self.signal_samples[rpeaks[2], 1], 'o')
-        plt.show()
-
-
-    def get_vector_r_peaks_distance_parameters(self):
-        """Calculate mean, sd, hr and rmsdd of distance R vector."""
-        vector_mean = mean(self.r_peaks_distance)
-        vector_sd = stdev(self.r_peaks_distance)
-        vector_hr = 60/vector_mean
-        vector_rmsdd = sqrt(sum([pow(vector_mean - x, 2) for x in self.r_peaks_distance]) / (self.r_peaks_distance.__len__() - 1)).__abs__()
-
-        # self.features.append(["Mean R Distance", vector_mean])
-        # self.features.append(["SD R Distance", vector_sd])
-        # self.features.append(["HR", vector_hr])
-        # self.features.append(["RMSDD", vector_rmsdd])
-
-
-    def calculate_r_peaks_distance(self, attr):
-        """Calculate distance between R peaks."""
-        self.find_r_peaks(attr)
-        self.r_peaks_distance = [self.r_peaks[i, 0] - self.r_peaks[i-1, 0] for i in np.arange(1, len(self.r_peaks))]
-
-
-    def get_poincare_parameters(self):
-        """Calculate SD1 and SD2 of poincare plot."""
-        result = nl.poincare(nni=self.r_peaks_distance, show=False, ellipse=False, vectors=False, legend=False)
-        # self.features.append(["SD1", result['sd1']])
-        # self.features.append(["SD2", result['sd2']])
-
-
-    def get_psd_parameters(self):
-        """Calculate LF HF, their normalized values and ratio LF/HF."""
-        result = fd.welch_psd(nni=self.r_peaks_distance, show=False)
-        # self.features.append(["LF", result[2][1]])
-        # self.features.append(["HF", result[2][2]])
-        # self.features.append(["LF norm", result[5][0]])
-        # self.features.append(["HF norm", result[5][1]])
-        # self.features.append(["LF/HF", result[6]])
-
 
     def smooth(self, attr):
         """Removes noise from the signal

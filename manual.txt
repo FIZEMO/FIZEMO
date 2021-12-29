@@ -14,13 +14,13 @@
         - only if at least one feature was specified in the scenario (file placed in ./results/features/ directory)
     *  signal after all modifications and running processing methods (file placed in ./results/signals/ directory).
 
-    If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file
-    and I'm sure things will lighten up.
+    If you're feeling overwhelmed by the possibilities, take a look at the sample configuration file, and I'm
+    sure things will lighten up.
 
     Examples of configuration files are placed in ./configuration folder.
 
 2. HOW TO RUN THE PROGRAM
-    a. Download the program from GitHub TU_LINK
+    a. Download the program from GitHub https://github.com/FIZEMO/FIZEMO
     b. Program was tested with Python 3.8.9 version. It is a recommended version.
     c. Install all the necessary dependencies contained in requirements.txt file
     d1. If one runs program from command line (for Windows users):
@@ -43,6 +43,7 @@
         * "save_processed_signal" - if set to "False" the program doesn't save the .csv file with processed signal; if this field is not specified, the default value is "True"
         * "draw_plot": "False" - if set to "False" the program doesn't plot the processed signal; if this field is not specified, the default value is "True"
     f. "windowing_attr" - dictionary which contains:
+    !IMPORTANT!: Not available for ECG signal yet - will come in future patches.
         * "length" - the length of the window
         * "slide" - the slide of the window (windows can overlap)
 
@@ -62,64 +63,94 @@
         For some functions this element might be omitted (look at [Z NORMALIZATION] function).
 
 5. AVAILABLE FUNCTIONS
+    AVAILABLE FOR BOTH GSR and ECG signals:
 
-    [BUTTERWORTH FILTER]
-    Description:  Filter the signal with butterworth filter
-    Function name: "butterworth_filter"
-    Attributes:
-       - "samplingRate" - signal sampling rate/frequency (integer - [Hz])
-            !REMEMBER!: If you have used decimation function, you should type in sampling rate you achieved after decimation process!
-       - "filterOrder" - the order of filter that will be created (integer - [Hz])
-       - "type" - the type of the filter. Available types (string):
-            'lowpass',
-            'highpass'
-            'bandpass'
-            'bandstop'
-       - "cut_of_freq" it is an array or a scalar of cut of frequencies.
-            Scalar for 'lowpass' and 'highpass' filter (float - [Hz]). Example: 5.0
-            Array of two values for 'bandpass' and 'bandstop' filter ([float, float] - [Hz]). Example: [5.0, 15.0]
+        [BUTTERWORTH FILTER]
+        Description:  Filter the signal with butterworth filter
+        Function name: "butterworth_filter"
+        Attributes:
+           - "samplingRate" - signal sampling rate/frequency (integer - [Hz])
+                !REMEMBER!: If you have used decimation function, you should type in sampling rate you achieved after decimation process!
+           - "filterOrder" - the order of filter that will be created (integer - [Hz])
+           - "type" - the type of the filter. Available types (string):
+                'lowpass',
+                'highpass'
+                'bandpass'
+                'bandstop'
+           - "cut_of_freq" it is an array or a scalar of cut of frequencies.
+                Scalar for 'lowpass' and 'highpass' filter (float - [Hz]). Example: 5.0
+                Array of two values for 'bandpass' and 'bandstop' filter ([float, float] - [Hz]). Example: [5.0, 15.0]
 
-    [DIFFERENTIATE]
-    Description: Differentiate the signal
-    Function name: "differentiate"
-    Attributes: None
+        [DIFFERENTIATE]
+        Description: Differentiate the signal
+        Function name: "differentiate"
+        Attributes: None
 
-    [SQUARE]
-    Description: Squares every value of the signal
-    Function name: "square"
-    Attributes: None
+        [SQUARE]
+        Description: Squares every value of the signal
+        Function name: "square"
+        Attributes: None
 
-    [MOVING WINDOW INTEGRATION]
-    Description:  Integrate the signal with moving frame of the given length
-    Function name: "moving_window_integration"
-    Attributes:
-        "lengthOfWindow": length of the moving window (integer - number of samples)
+        [MOVING WINDOW INTEGRATION]
+        Description:  Integrate the signal with moving frame of the given length
+        Function name: "moving_window_integration"
+        Attributes:
+            "lengthOfWindow": length of the moving window (integer - number of samples)
 
-    [DECIMATION]
-    Description:  process of bandwidth reduction (filtering) and sample-rate reduction
-    Function name: "decimate"
-    Attributes:
-        "samplingFrequency" - frequency with which signal was sampled (integer - [Hz])
-        "goalFrequency" - goal frequency with which signal should be sampled (integer - [Hz])
+        [DECIMATION]
+        Description:  process of bandwidth reduction (filtering) and sample-rate reduction
+        Function name: "decimate"
+        Attributes:
+            "samplingFrequency" - frequency with which signal was sampled (integer - [Hz])
+            "goalFrequency" - goal frequency with which signal should be sampled (integer - [Hz])
 
-    [GET PHASE PART]
-    Description:  calculate phase part of given signal by subtract baseline values
-    Function name: "get_phase_part"
-    Attributes:
-        "deg" is degree of the polynomial that will estimate the data baseline - recommended is 10
-        "maxIt" is maximum number of iterations to perform for baseline function - recommended is 100
+        [GET PHASE PART]
+        Description:  calculate phase part of given signal by subtract baseline values
+        Function name: "get_phase_part"
+        Attributes:
+            "deg" is degree of the polynomial that will estimate the data baseline - recommended is 10
+            "maxIt" is maximum number of iterations to perform for baseline function - recommended is 100
 
-    [Z NORMALIZATION]
-    Description:  process of normalizing signal with algorithm Z
-    Function name: "z_normalize"
-    Attributes: None
+        [Z NORMALIZATION]
+        Description:  process of normalizing signal with algorithm Z
+        Function name: "z_normalize"
+        Attributes: None
 
-    [NOISE FILTERING]
-    Description: Smooths out the signal by averaging the samples.
-    Function name: "smooth"
-    Attributes:
-        "numberOfIterations" - This is the number of iterations for the sample smoothing algorithm.
-            The higher the number of iterations, the smoother the signal.
+        [NOISE FILTERING]
+        Description: Smooths out the signal by averaging the samples.
+        Function name: "smooth"
+        Attributes:
+            "numberOfIterations" - This is the number of iterations for the sample smoothing algorithm.
+                The higher the number of iterations, the smoother the signal.
+
+        AVAILABLE ONLY FOR ECG signals:
+
+        [PAN TOMPKINS]
+        Description:
+        Uses Pan–Tompkins algorithm to extract vector of R-peaks distances.
+            In this solution following steps are being executed:
+            1) Filter signal with bandpass filter, where user can choose:
+                - cut of frequencies: recommended [5, 15]
+                - order of the filter
+            2) Differentiate the signal.
+            3) Square the signal.
+            4) Applies moving window integration, where user use can chooose:
+                -length of the moving window.
+            5) Calculate vector with R-peaks distances
+
+            !IMPORTANT!: This method must be executed before the following methods:
+                1) get_vector_r_peaks_distance_parameters
+                2) get_poincare_parameters
+        Function name: "pan_tompkins"
+        Attributes:
+           - "samplingRate" - signal sampling rate/frequency (integer - [Hz])
+                !REMEMBER!: If you have used decimation function, you should type in sampling rate you achieved after decimation process!
+           - "filterOrder" - the order of filter that will be created (integer - [Hz])
+           - "cut_of_freq" it is an array or a scalar of cut of frequencies.
+                Scalar for 'lowpass' and 'highpass' filter (float - [Hz]). Example: 5.0
+                Array of two values for 'bandpass' and 'bandstop' filter ([float, float] - [Hz]). Example: [5.0, 15.0]
+             "lengthOfWindow":
+                length of the moving window (integer - number of samples)
 
 6. FEATURE EXTRACTION STRUCTURE
     To call function for feature extraction from the signal in configuration file one has to fill 3 elements:
@@ -134,42 +165,60 @@
         Otherwise, the label will be exactly the same as specified in the configuration file.
 
 7. AVAILABLE FUNCTIONS FOR FEATURE EXTRACTION
-    [MEAN]
-    Description: Function to extract mean value from the signal
-    Function name: "mean"
-    Default output label: "Mean"
+    AVAILABLE FOR BOTH GSR and ECG signals:
+        [MEAN]
+        Description: Function to extract mean value from the signal
+        Function name: "mean"
+        Default output label: "Mean"
 
-    [MEDIAN]
-    Description: Function to extract median value from the signal
-    Function name: "median"
-    Default output label: "Median"
+        [MEDIAN]
+        Description: Function to extract median value from the signal
+        Function name: "median"
+        Default output label: "Median"
 
-    [STANDARD DEVIATION]
-    Description: Function to extract standard deviation value from the signal
-    Function name: "standard_deviation"
-    Default output label: "Standard deviation"
+        [STANDARD DEVIATION]
+        Description: Function to extract standard deviation value from the signal
+        Function name: "standard_deviation"
+        Default output label: "Standard deviation"
 
-    [MINIMUM]
-    Description: Function to extract minimum value from the signal
-    Function name: "minimum"
-    Default output label: "Minimum"
+        [MINIMUM]
+        Description: Function to extract minimum value from the signal
+        Function name: "minimum"
+        Default output label: "Minimum"
 
-    [MAXIMUM]
-    Description: Function to extract maximum value from the signal
-    Function name: "maximum"
-    Default output label: "Maximum"
+        [MAXIMUM]
+        Description: Function to extract maximum value from the signal
+        Function name: "maximum"
+        Default output label: "Maximum"
 
-    [VARIANCE]
-    Description: Function to extract the variance value from the signal
-    Function name: "variance"
-    Default output label: "Variance"
+        [VARIANCE]
+        Description: Function to extract the variance value from the signal
+        Function name: "variance"
+        Default output label: "Variance"
 
-    [KURTOSIS]
-    Description: Function to extract kurtosis value from the signal
-    Function name: "kurtosis"
-    Default output label: "Kurtosis"
+        [KURTOSIS]
+        Description: Function to extract kurtosis value from the signal
+        Function name: "kurtosis"
+        Default output label: "Kurtosis"
 
-    [SKEWNESS]
-    Description: Function to extract skewness value from the signal
-    Function name: "skewness"
-    Default output label: "Skewness"
+        [SKEWNESS]
+        Description: Function to extract skewness value from the signal
+        Function name: "skewness"
+        Default output label: "Skewness"
+
+    AVAILABLE ONLY FOR ECG signals:
+
+        [GET VECTOR R PEAKS DISTANCE PARAMETERS]
+        Description:  Extract mean, standard deviation, heart rate and RMSSD of distance R vector.
+        Function name: "get_vector_r_peaks_distance_parameters"
+        Attributes: None
+
+        [GET POINCARE PARAMETERS]
+        Description: Extract SD1 and SD2 values from poincare plot.
+        Function name: "get_poincare_parameters"
+        Attributes: None
+
+        [GET PSD PARAMETERS]
+        Description: Extract LF HF, their normalized values and ratio LF/HF.
+        Function name: "get_psd_parameters"
+        Attributes: None
