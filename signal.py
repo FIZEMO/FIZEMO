@@ -1,9 +1,12 @@
 import peakutils
+
 import scipy.signal as ss
+import scipy.stats as stat
+
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
-import scipy.stats as stat
+
 
 
 class Signal:
@@ -141,7 +144,7 @@ class Signal:
                         'bandpass'
                         'bandstop'
                - cut_of_freq: int | [int, int]
-                    an array or a scalar of cut of frequencies that will be aplied to the filter
+                    an array or a scalar of cut of frequencies that will be applied to the filter
                         Scalar for 'lowpass' and 'highpass' filter.
                         Array for 'bandpass' and 'bandstop' filter.
            """
@@ -170,7 +173,7 @@ class Signal:
     def differentiate(self):
         """Differentiate the signal"""
 
-        differentiated_signal = np.ediff1d(self.get_values())
+        differentiated_signal = np.diff(self.get_values())
         self.set_values(differentiated_signal)
 
     def square(self):
