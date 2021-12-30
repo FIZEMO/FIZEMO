@@ -1,7 +1,7 @@
 {
   "Scenariusz ECG_Test": [
     {
-      "signalFileName": "ECG_1",
+      "signalFileName": "current",
       "signalType": "ECG",
       "columns_to_read": {"timestamp": 1, "values": 2},
       "methods": [
