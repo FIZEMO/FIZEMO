@@ -10,5 +10,4 @@ if __name__ == '__main__':
         os.chdir('D:\Projects\FIZEMO')
         main.main("./configuration/config.json")
         os.chdir('D:\Projects\FIZEMO\signals')
-        new_name = "signal_{}.csv".format(index)
-        os.rename('current.csv', new_name)
+        os.rename('current.csv', file)
