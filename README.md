@@ -61,7 +61,9 @@ If you are using pip, you can try this snippets:
     
     git clone https://github.com/FIZEMO/FIZEMO.git
   2. Install all the necessary dependencies contained in **Packages needed before program execution** section
-  3. How to run the program:
+  3. Customize the `config.json` file in the `./configuration` catalog according to your needs: you will find how to do this in the following sections.
+  4. Put the signals you want to process as csv files into the `./signals` folder
+  5. How to run the program:
       - If one runs program from developer tool like PyCharm:
         1. Set configuration parameter (command line parameters) as the path to configuration file (For PyCharm: Run->Edit Configurations and write in Parameters field the path to configuration file, for example "./configuration/config.json")
       - If one runs program from command line (for Windows users):
@@ -70,6 +72,8 @@ If you are using pip, you can try this snippets:
     
     py -3 main.py "./configuration/config.json"
     
+    
+**Results**: After successful run of the program you will find extracted features in `./results/features` catalog, and processed signal in `./results/signals` folder in files with the same name as you named the scenario. If you include more than one scenario in the configuration file, you will have more output files in those folders.
     
 ## Detailed description
 Here are presented all the functions that can be used during signal processing.
