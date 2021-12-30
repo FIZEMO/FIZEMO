@@ -1,7 +1,7 @@
 # FIZEMO
 
 This program is designed to process physiological signals and extract the most important features from them.
-For more details check **Detailed description**
+For more details check [Detailed description](#detailed-description)
 
 
 ## A research project created by 
