@@ -60,7 +60,7 @@ If you are using pip, you can try this snippets:
    1. Clone the program
     
     git clone https://github.com/FIZEMO/FIZEMO.git
-  2. Install all the necessary dependencies contained in **Packages needed before program execution** section
+  2. Install all the necessary dependencies contained in [Detailed description](#packages-needed-before-program-execution) section.
   3. Customize the `config.json` file in the `./configuration` catalog according to your needs: you will find how to do this in the following sections.
   4. Put the signals you want to process as csv files into the `./signals` folder
   5. How to run the program:
@@ -101,8 +101,8 @@ sure things will lighten up :bulb:.
 Each scenario defined in configuration file has a special structure. 
 ### It has to contain four elements:
   - `"signalFileName"` - a string representing the name of the file with signal which is placed in ./signals catalog 
-     > *example: "./signals/rawGSR.csv"*
-  - `"signalType"` - a string representing a type of processed signal, it has to be chosen from the list of available types of signal
+     > *example: "./signals/rawGSR"*
+  - `"signalType"` - a string representing a type of processed signal, it has to be chosen from the list of [available types of signal](#available-types-of-signal).
   - `"methods"` - list of methods for signal processing or feature extraction
   - `"columns_to_read"` - dictionary which contains information about columns to read from .csv file with signal data with specified "timestamp" column number and "values" column number
 
@@ -115,17 +115,97 @@ Each scenario defined in configuration file has a special structure.
     * `"length"` - the length of the window
     * `"slide"` - the slide of the window (windows can overlap)
 
+**Example:**
+```json
+{
+  "Scenario for GSR": [
+      {
+        "signalFileName": "rawGSR",
+        "signalType": "GSR",
+        "columns_to_read": {"timestamp": 1, "values": 2},
+        "options": {
+          "draw_plot": "False"
+        },
+        "windowing": {"length": 1000, "slide": 500},
+        "methods": [
+          {
+            "functionName": "decimate",
+            "order": 1,
+            "attributes": {
+              "samplingFrequency": 128,
+              "goalFrequency": 50
+            }
+          },
+          {
+            "functionName": "maximum",
+            "order": 2,
+            "outputLabel": "Max"
+          }
+        ]
+      }
+    ],
+    "Scenariusz for ECG": [
+    {
+      "signalFileName": "rawECG",
+      "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "methods": [
+        {
+          "functionName": "pan_tompkins",
+          "order": 1,
+          "attributes": {
+            "filterOrder": 5,
+            "samplingRate": 250,
+            "cutOfFrequencies": [
+              5,
+              15
+            ],
+            "lengthOfWindow": 15
+          }
+        },
+        {
+          "functionName": "get_poincare_parameters",
+          "order": 2
+        },
+      ]
+    }
+  ]
+}
+```
+
 ## AVAILABLE TYPES OF SIGNAL
   - GSR (Galvanic Skin Response)
   - ECG (Electrocardiography)
 
-## METHOD STRUCTURE
+## PROCESSING METHOD STRUCTURE 
+We call methods for processing signal inside `"methods"` array inside config file.
 To call function for processing signal in configuration file one has to fill 3 elements:
   - `"functionName"`: "..." - the name of the function one wants to use (string),
   - `"order"`: ... - natural number bigger or equal 1 which indicates the order of processing flow (int),
-  - `"attributes"`: { #attributes } - attributes that are unique for each function; they specify function parameters.
-  
-For some functions this element might be omitted (for example look at [Z NORMALIZATION] function).
+  - `"attributes"`: { #attributes } - attributes that are unique for each function; they specify function parameters. For some functions this element might be omitted (for example look at [Z NORMALIZATION](#z-normalization) function).
+
+**Example for method that filter the signal with butterworth filter:**
+```json
+"methods": [
+  {
+    "functionName": "butterworth_filter",
+    "order": 1,
+    "attributes": {
+      "filterOrder": 5,
+      "samplingRate": 250,
+      "type": "bandpass",
+      "cutOfFrequencies": [
+        5,
+        15
+      ]
+    }
+  },
+  {
+    "functionName": "z_normalize",
+    "order": 2
+  }
+]
+```
 
 ## AVAILABLE METHODS
 ### AVAILABLE FOR BOTH GSR and ECG signals:
@@ -215,12 +295,26 @@ For some functions this element might be omitted (for example look at [Z NORMALI
           length of the moving window (integer - number of samples)  
 
 ## FEATURE EXTRACTION METHOD STRUCTURE
+We call methods for feature extraction identically like we would call method for processing signal, which is inside `"methods"` array inside config file.
 To call function for feature extraction from the signal in configuration file one has to fill 3 elements:
   - `"functionName"`: "..." - name of the function one wants to use (string),
   - `"order"`: ... - natural number bigger or equal 1 which indicates the order of processing flow (int),
   - "outputLabel": "..." - optional elements where user can define label for extracted feature. (string)
     If this element is omitted, program will generate default output label for a feature.
     Otherwise, the label will be exactly the same as specified in the configuration file.
+    
+**Example for method that extracts standard deviation from the signal:**
+"methods": [
+  {
+    "functionName": "standard_deviation",
+    "order": 1,
+    "outputLabel": "Std"
+  },
+  {
+    "functionName": "maximum",
+    "order": 2
+  }
+]
 
 ## AVAILABLE METHODS FOR FEATURE EXTRACTION
 ### AVAILABLE FOR BOTH GSR and ECG signals:
