@@ -1,0 +1,74 @@
+{
+  "Scenario_GSR": [
+    {
+      "signalFileName": "rawGSR",
+      "signalType": "GSR",
+      "columns_to_read": {"timestamp": 1, "values": 2},
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "True"
+      },
+      "methods": [
+        {
+          "functionName": "decimate",
+          "order": 1,
+          "attributes": {
+            "samplingFrequency": 128,
+            "goalFrequency": 10
+          }
+        },
+        {
+          "functionName": "get_phase_part",
+          "order": 2,
+          "attributes": {
+            "deg": 10,
+            "maxIt": 100
+          }
+        },
+        {
+          "functionName": "z_normalize",
+          "order": 3
+        },
+        {
+          "functionName": "smooth",
+          "order": 4,
+          "attributes": {
+            "numberOfIterations": 1000
+          }
+        },
+        {
+          "functionName": "mean",
+          "order": 5
+        },
+        {
+          "functionName": "median",
+          "order": 6
+        },
+        {
+          "functionName": "standard_deviation",
+          "order": 7
+        },
+        {
+          "functionName": "minimum",
+          "order": 8
+        },
+        {
+          "functionName": "maximum",
+          "order": 9
+        },
+        {
+          "functionName": "variance",
+          "order": 10
+        },
+        {
+          "functionName": "kurtosis",
+          "order": 11
+        },
+        {
+          "functionName": "skewness",
+          "order": 12
+        }
+      ]
+    }
+  ]
+}
