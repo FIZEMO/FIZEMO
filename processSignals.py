@@ -6,13 +6,13 @@ if __name__ == '__main__':
     signal_files = os.listdir('signals')
 
     for file in signal_files:
-        os.chdir('D:\\instalki\\pg\\2 stopien\\sem1\\projekt badawczy\\git_hub\\FIZEMO\\signals')
+        os.chdir('./signals')
         os.rename(file, 'current.csv')
-        os.chdir('D:\\instalki\pg\\2 stopien\\sem1\\projekt badawczy\\git_hub\\FIZEMO')
+        os.chdir('../')
         main.main("./configuration/config.json")
-        os.chdir('D:\\instalki\\pg\\2 stopien\\sem1\\projekt badawczy\\git_hub\\FIZEMO\\signals')
+        os.chdir('./signals')
         os.rename('current.csv', file)
-
+        os.chdir('../')
 
     feature_files = os.listdir('results\\features')
 
