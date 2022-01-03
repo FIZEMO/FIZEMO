@@ -146,11 +146,19 @@ class Scenario:
             with open("./results/features/" + file_name + ".csv", 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
                 self.setup_csv_header(csv_writer)
-                csv_writer.writerow([x[0] for x in self.processed_signal.features])
+                attributes = [x[0] for x in self.processed_signal.features]
+                csv_writer.writerow(np.append(np.array(attributes), ["Arousal", "Valence"], 0))
                 feature_values = [x[1] for x in self.processed_signal.features]
+
+                labels = []
+                labels.append(self.processed_signal.arousal)
+                labels.append(self.processed_signal.valence)
+
                 feature_values = np.array(feature_values)
                 feature_values = feature_values.transpose()
+
                 for row in feature_values:
+                    row = np.append(row, np.array(labels), 0)
                     csv_writer.writerow(row)
 
     def save_signal_csv(self, file_name):
