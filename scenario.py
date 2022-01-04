@@ -141,6 +141,8 @@ class Scenario:
                (will be placed in ./results/features/).
                The name is compatible with the signal file name which is also saved after running the scenario.
         """
+        labels = [self.processed_signal.columns_selected["arousal"][0],
+                  self.processed_signal.columns_selected["valence"][0]]
 
         if self.processed_signal.features.__len__() > 0:
             with open("./results/features/" + file_name + ".csv", 'w', newline='') as csv_file:
@@ -149,11 +151,6 @@ class Scenario:
                 attributes = [x[0] for x in self.processed_signal.features]
                 csv_writer.writerow(np.append(np.array(attributes), ["Arousal", "Valence"], 0))
                 feature_values = [x[1] for x in self.processed_signal.features]
-
-                labels = []
-                labels.append(self.processed_signal.arousal)
-                labels.append(self.processed_signal.valence)
-
                 feature_values = np.array(feature_values)
                 feature_values = feature_values.transpose()
 
