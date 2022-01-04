@@ -1,7 +1,7 @@
 {
   "Scenario_ECG": [
     {
-      "signalFileName": "ECG_Clip01",
+      "signalFileName": "current",
       "signalType": "ECG",
       "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
       "methods": [
@@ -30,15 +30,15 @@
         },
         {
           "functionName": "get_poincare_parameters",
-          "order": 7
+          "order": 3
         },
         {
           "functionName": "get_vector_r_peaks_distance_parameters",
-          "order": 8
+          "order": 4
         },
         {
           "functionName": "get_psd_parameters",
-          "order": 9
+          "order": 5
         }
       ]
     }

@@ -116,7 +116,7 @@ class Scenario:
     def save_results(self):
         """Writes extracted features and processed signal (if selected) to separate .csv files"""
 
-        date = datetime.now().strftime("%d-%m-%Y %H-%M-%S").__str__()
+        date = datetime.now().strftime("%d-%m-%Y %H-%M-%S.%f")[:-3].__str__()
         features_file_name = self.scenario_name + " " + date
         signal_file_name = self.processed_signal.signal_type + "signal " + features_file_name
 

@@ -5,7 +5,8 @@ import csv
 if __name__ == '__main__':
     signal_files = os.listdir('signals')
 
-    for file in signal_files:
+    for index, file in enumerate(signal_files):
+        print(index)
         os.chdir('./signals')
         os.rename(file, 'current.csv')
         os.chdir('../')
