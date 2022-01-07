@@ -106,13 +106,13 @@ class Signal:
            """
 
         path = './signals/' + signal_file_name + '.csv'
-        pandas_data_framed_signal = pd.read_csv(r'' + path)
-        columns_names = pandas_data_framed_signal.columns
-        columns_selected = list()
-        columns_selected.append(columns_names[columns["timestamp"]-1])
-        columns_selected.append(columns_names[columns["values"]-1])
+        pandas_data_framed_signal = pd.read_csv(r'' + path, header=None)
 
-        pandas_data_framed_signal = pandas_data_framed_signal[columns_selected]
+        self.columns_selected = pandas_data_framed_signal[[columns["timestamp"]-1, columns["values"]-1,
+                                                           columns["arousal"]-1, columns["valence"] - 1]]
+        self.columns_selected.columns = ["timestamp", "values", "arousal", "valence"]
+        pandas_data_framed_signal = self.columns_selected[["timestamp", "values"]]
+
         self.signal_type = signal_type
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.windowing_attributes = windowing_attr

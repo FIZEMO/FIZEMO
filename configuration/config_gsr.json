@@ -1,12 +1,12 @@
 {
   "Scenario_GSR": [
     {
-      "signalFileName": "rawGSR",
+      "signalFileName": "Subject_10_GSR_Clip2",
       "signalType": "GSR",
-      "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
+      "columns_to_read": {"timestamp": 1, "values": 5, "arousal": 6, "valence":  7},
       "options": {
         "save_processed_signal": "False",
-        "draw_plot": "True"
+        "draw_plot": "False"
       },
       "methods": [
         {
