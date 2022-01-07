@@ -1,26 +1,30 @@
 {
-  "Scenario_ECG": [
+  "Scenario_ECG_1": [
     {
       "signalFileName": "current",
       "signalType": "ECG",
-      "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
+      "columns_to_read": {"timestamp": 1, "values": 6, "arousal": 7, "valence":  8},
+      "options": {
+        "save_processed_signal": "False",
+        "draw_plot": "False"
+      },
       "methods": [
         {
           "functionName": "butterworth_filter",
           "order": 1,
           "attributes": {
-            "filterOrder": 5,
-            "samplingRate": 1000,
+            "filterOrder": 4,
+            "samplingRate": 256,
             "type": "bandstop",
-            "cutOfFrequencies": [49,51]
+            "cutOfFrequencies": [49,50]
           }
         },
         {
           "functionName": "pan_tompkins",
           "order": 2,
           "attributes": {
-            "filterOrder": 5,
-            "samplingRate": 1000,
+            "filterOrder": 4,
+            "samplingRate": 256,
             "cutOfFrequencies": [
               5,
               15

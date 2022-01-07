@@ -84,6 +84,7 @@ class PeriodicSignal(Signal):
         self.differentiate()
         self.square()
         self.moving_window_integration(attributes)
+        self.z_normalize()
         self.calculate_r_peaks_distance(attributes)
 
     def find_r_peaks(self, attr):
@@ -102,8 +103,14 @@ class PeriodicSignal(Signal):
         """
 
         sampling_rate = int(attr["samplingRate"])
-
         r_peaks = biosppy.signals.ecg.ecg(self.get_values(), sampling_rate=sampling_rate, show=False)
+        # plt.figure("test")
+        # plt.title("test")
+        # plt.xlabel("x")
+        # plt.ylabel("y")
+        # plt.plot(self.signal_samples[:, 0], self.signal_samples[:, 1])
+        # plt.plot(self.signal_samples[r_peaks[2], 0], self.signal_samples[r_peaks[2], 1], 'o')
+        # plt.show()
         return r_peaks[2] / sampling_rate
 
     def calculate_r_peaks_distance(self, attr):

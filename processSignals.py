@@ -3,17 +3,17 @@ import main
 import csv
 
 if __name__ == '__main__':
-    signal_files = os.listdir('signals')
-
-    for index, file in enumerate(signal_files):
-        print(index)
-        os.chdir('./signals')
-        os.rename(file, 'current.csv')
-        os.chdir('../')
-        main.main("./configuration/config.json")
-        os.chdir('./signals')
-        os.rename('current.csv', file)
-        os.chdir('../')
+    # signal_files = os.listdir('signals')
+    #
+    # for index, file in enumerate(signal_files):
+    #     print(index, file)
+    #     os.chdir('./signals')
+    #     os.rename(file, 'current.csv')
+    #     os.chdir('../')
+    #     main.main("./configuration/config_ecg.json")
+    #     os.chdir('./signals')
+    #     os.rename('current.csv', file)
+    #     os.chdir('../')
 
     feature_files = os.listdir('results\\features')
 

@@ -166,7 +166,8 @@ class Signal:
 
         """Applying created filter's coefficients to the signal.Filtered signal is applied only to the values of the signal. 
              It did not changed the timestamps."""
-        filtered_values = ss.lfilter(b, a, self.get_values())
+        values = self.get_values()
+        filtered_values = ss.lfilter(b, a, values)
         self.set_values(filtered_values)
 
     def differentiate(self):
@@ -510,5 +511,5 @@ class Signal:
         else:
             length_of_vector = length_of_values
 
-        for index in range(length_of_vector):
+        for index in range(0, length_of_vector):
             self.signal_samples[index][1] = new_values[index]
