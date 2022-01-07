@@ -2,6 +2,7 @@ import peakutils
 
 import scipy.signal as ss
 import scipy.stats as stat
+import scipy.integrate as integration
 
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -44,8 +45,8 @@ class Signal:
                 Decimates the signal.
             get_phase_part(attr)
                 Gets phase part of given signal.
-            z_normalize()
-                Normalizes the signal.
+            normalize_by_std()
+                Normalizes the signal by standard deviation.
             smooth()
                 Smooths the signal by averaging the samples.
 
@@ -75,6 +76,8 @@ class Signal:
                 Extracts kurtosis value from the signal.
             skewness(attr)
                 Extracts skewness value from the signal.
+            area_under_curve(self, attr="Area under curve"):
+                Extracts the area under the curve characteristic value from the signal.
 
 
             Other methods:
@@ -234,27 +237,20 @@ class Signal:
         baseline = peakutils.baseline(self.signal_samples[:, 1], deg=degree, max_it=max_iterations)
         self.signal_samples[:, 1] = [(j - p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
-    def z_normalize(self):
-        """Normalizes the signal."""
+    def normalize_by_std(self):
+        """Normalizes the signal by standard standard deviation."""
 
         mean = np.mean(self.get_values())
-        variance = np.var(self.get_values())
+        standard_dev = np.std(self.get_values())
 
-        for i, (timestamps, values) in enumerate(self.signal_samples):
-            values = (values - mean) / variance
-            self.signal_samples[i][1] = values
+        data_norm_by_std = [((number - mean) / standard_dev) for number in self.get_values()]
+        self.set_values(data_norm_by_std)
 
-    def smooth(self, attr):
+    def smooth(self):
         """Removes noise from the signal
-            It actually is signal smoothing by averaging the samples.
+            It actually smooths signal by averaging the samples.
             For more info visit: https://becominghuman.ai/introduction-to-timeseries-analysis-using-python-numpy-only-3a7c980231af
 
-            Parameters
-            ----------
-            attr : {}
-                The dictionary with attribute:
-                - numberOfIterations: int
-                    The number of iterations for the sample smoothing algorithm.
         """
 
         "We start indexing at 2 because the algorithm needs the previous two samples of the signal to work properly."
@@ -264,7 +260,7 @@ class Signal:
             In order to get only value we have to point at the index 1 - therefore: value_of_signal = 1
         """
         value_of_signal = 1
-        for j in range(int(attr["numberOfIterations"])):
+        for j in range(len(self.get_values())):
             for i in range(starting_index, len(self.signal_samples)):
                 self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] +
                                                                self.signal_samples[i][value_of_signal]) / 2
@@ -425,6 +421,24 @@ class Signal:
         feature_values = list()
         for window in signal_values:
             feature_values.append(stat.skew(window))
+
+        self.features.append([attr, feature_values])
+
+    def area_under_curve(self, attr="Area under curve"):
+        """Extracts the area under the curve characteristic value from the signal.
+            After being extracted, values are saved to the features list.
+
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+
+           """
+
+        signal_values = self.get_windowed_values()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(integration.trapz(window))
 
         self.features.append([attr, feature_values])
 
