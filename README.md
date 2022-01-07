@@ -256,16 +256,13 @@ To call function for processing signal in configuration file one has to fill 3 e
     - `"maxIt"` is maximum number of iterations to perform for baseline function - *recommended is 100*
 
 #### [Z NORMALIZATION]
-  - Description:  process of normalizing signal with algorithm Z
-  - Function name: `"z_normalize"`
+  - Description:  process of normalizing signal by its standard deviation
+  - Function name: `"normalize_by_std"`
   - Attributes: None
 
-#### [NOISE FILTERING]
+#### [SMOOTH]
   - Description: Smooths out the signal by averaging the samples.
   - Function name: `"smooth"`
-  - Attributes:
-    - `"numberOfIterations"` - This is the number of iterations for the sample smoothing algorithm.
-        The higher the number of iterations, the smoother the signal.
 
 ### AVAILABLE ONLY FOR ECG signals:
 
@@ -357,6 +354,11 @@ To call function for feature extraction from the signal in configuration file on
   - Description: Function to extract skewness value from the signal
   - Function name: `"skewness"`
   - Default output label: "Skewness"
+
+#### [AREA UNDER CURVE]
+  - Description: Function to extract the area under the curve characteristic value from the signal.
+  - Function name: `"area_under_curve"`
+  - Default output label: "Area under curve"
 
 ### AVAILABLE ONLY FOR ECG signals:
 

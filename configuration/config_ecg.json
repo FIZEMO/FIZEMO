@@ -1,0 +1,53 @@
+{
+  "Scenario_ECG": [
+    {
+      "signalFileName": "ECG_Clip01",
+      "signalType": "ECG",
+      "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
+      "methods": [
+        {
+          "functionName": "butterworth_filter",
+          "order": 1,
+          "attributes": {
+            "filterOrder": 5,
+            "samplingRate": 1000,
+            "type": "bandstop",
+            "cutOfFrequencies": [49,51]
+          }
+        },
+        {
+          "functionName": "pan_tompkins",
+          "order": 2,
+          "attributes": {
+            "filterOrder": 5,
+            "samplingRate": 1000,
+            "cutOfFrequencies": [
+              5,
+              15
+            ],
+            "lengthOfWindow": 15
+          }
+        },
+        {
+          "functionName": "get_poincare_parameters",
+          "order": 7
+        },
+        {
+          "functionName": "get_vector_r_peaks_distance_parameters",
+          "order": 8
+        },
+        {
+          "functionName": "get_psd_parameters",
+          "order": 9,
+          "outputLabel": {
+            "lf": "LF Value",
+            "hf": "HF Value",
+            "lf_norm": "LF Normal",
+            "hf_norm": "HF Normal",
+            "lf_hf": "LF - HF"
+          }
+        }
+      ]
+    }
+  ]
+}
