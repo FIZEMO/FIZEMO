@@ -2,18 +2,18 @@ import peakutils
 
 import scipy.signal as ss
 import scipy.stats as stat
+import scipy.integrate as integration
 
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 
 
+
 class Signal:
     """
             A class used to represent a signal
-
             ...
-
             Attributes
             ----------
             signal_samples : [[]]
@@ -26,9 +26,6 @@ class Signal:
             windowing_attributes : dict
                 Dictionary which contains information about the windowing, like: length of the window and its slide.
                 If set to None - there is no windowing included.
-
-
-
             Methods for signal processing:
             -------
             butterworth_filter(attr)
@@ -43,12 +40,10 @@ class Signal:
                 Decimates the signal.
             get_phase_part(attr)
                 Gets phase part of given signal.
-            z_normalize()
-                Normalizes the signal.
+            normalize_by_std()
+                Normalizes the signal by standard deviation.
             smooth()
                 Smooths the signal by averaging the samples.
-
-
             Methods for feature extraction:
             Additional information for programmers:
             In all methods for feature extraction there is implemented a mechanism of extraction for windowed signal.
@@ -74,8 +69,8 @@ class Signal:
                 Extracts kurtosis value from the signal.
             skewness(attr)
                 Extracts skewness value from the signal.
-
-
+            area_under_curve(self, attr="Area under curve"):
+                Extracts the area under the curve characteristic value from the signal.
             Other methods:
             -------
             draw_plot(window_name, title_name, x_name, y_name)
@@ -95,7 +90,6 @@ class Signal:
     def __init__(self, signal_file_name, signal_type, columns, windowing_attr=None):
         """Initialization of the Signal object which include loading the signal from .csv file and
             saving it as signal_samples property
-
             Parameters
            ----------
            signal_file_name : str
@@ -109,17 +103,16 @@ class Signal:
            windowing_attr : dict
                 Dictionary which contains information about the windowing, like: length of the window and its slide.
                 If set to None - there is no windowing included.
-
            """
 
         path = './signals/' + signal_file_name + '.csv'
-        pandas_data_framed_signal = pd.read_csv(r'' + path, header=None)
+        pandas_data_framed_signal = pd.read_csv(r'' + path)
+        columns_names = pandas_data_framed_signal.columns
+        columns_selected = list()
+        columns_selected.append(columns_names[columns["timestamp"]-1])
+        columns_selected.append(columns_names[columns["values"]-1])
 
-        self.columns_selected = pandas_data_framed_signal[[columns["timestamp"]-1, columns["values"]-1,
-                                                           columns["arousal"]-1, columns["valence"] - 1]]
-        self.columns_selected.columns = ["timestamp", "values", "arousal", "valence"]
-        pandas_data_framed_signal = self.columns_selected[["timestamp", "values"]]
-
+        pandas_data_framed_signal = pandas_data_framed_signal[columns_selected]
         self.signal_type = signal_type
         self.signal_samples = pandas_data_framed_signal.to_numpy()
         self.windowing_attributes = windowing_attr
@@ -127,7 +120,6 @@ class Signal:
 
     def butterworth_filter(self, attr):
         """Creating and using Butterworth digital filter
-
            Parameters
            ----------
            attr : {}
@@ -166,8 +158,7 @@ class Signal:
 
         """Applying created filter's coefficients to the signal.Filtered signal is applied only to the values of the signal. 
              It did not changed the timestamps."""
-        values = self.get_values()
-        filtered_values = ss.lfilter(b, a, values)
+        filtered_values = ss.lfilter(b, a, self.get_values())
         self.set_values(filtered_values)
 
     def differentiate(self):
@@ -184,7 +175,6 @@ class Signal:
 
     def moving_window_integration(self, attr):
         """Integrate the signal with moving frame of the given length
-
            Parameters
            ----------
            attr : {}
@@ -200,7 +190,6 @@ class Signal:
 
     def decimate(self, attr):
         """Decimates the signal
-
            Parameters
            ----------
            attr : {}
@@ -218,7 +207,6 @@ class Signal:
 
     def get_phase_part(self, attr):
         """Gets phase part of given signal
-
             Parameters
             ----------
             attr : {}
@@ -234,27 +222,19 @@ class Signal:
         baseline = peakutils.baseline(self.signal_samples[:, 1], deg=degree, max_it=max_iterations)
         self.signal_samples[:, 1] = [(j - p) for j, p in zip(self.signal_samples[:, 1], baseline)]
 
-    def z_normalize(self):
-        """Normalizes the signal."""
+    def normalize_by_std(self):
+        """Normalizes the signal by standard standard deviation."""
 
         mean = np.mean(self.get_values())
-        variance = np.var(self.get_values())
+        standard_dev = np.std(self.get_values())
 
-        for i, (timestamps, values) in enumerate(self.signal_samples):
-            values = (values - mean) / variance
-            self.signal_samples[i][1] = values
+        data_norm_by_std = [((number - mean) / standard_dev) for number in self.get_values()]
+        self.set_values(data_norm_by_std)
 
-    def smooth(self, attr):
+    def smooth(self):
         """Removes noise from the signal
-            It actually is signal smoothing by averaging the samples.
+            It actually smooths signal by averaging the samples.
             For more info visit: https://becominghuman.ai/introduction-to-timeseries-analysis-using-python-numpy-only-3a7c980231af
-
-            Parameters
-            ----------
-            attr : {}
-                The dictionary with attribute:
-                - numberOfIterations: int
-                    The number of iterations for the sample smoothing algorithm.
         """
 
         "We start indexing at 2 because the algorithm needs the previous two samples of the signal to work properly."
@@ -264,14 +244,13 @@ class Signal:
             In order to get only value we have to point at the index 1 - therefore: value_of_signal = 1
         """
         value_of_signal = 1
-        for j in range(int(attr["numberOfIterations"])):
+        for j in range(len(self.get_values())):
             for i in range(starting_index, len(self.signal_samples)):
                 self.signal_samples[i - 1][value_of_signal] = (self.signal_samples[i - 2][value_of_signal] +
                                                                self.signal_samples[i][value_of_signal]) / 2
 
     def draw_plot(self, window_name, title_name, x_name, y_name):
         """Plots the signal chart with specified names of window, title, x and y values.
-
            Parameters
            ----------
            window_name : str
@@ -294,12 +273,10 @@ class Signal:
 
     def mean(self, attr="Mean"):
         """Extracts the mean value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -311,12 +288,10 @@ class Signal:
 
     def median(self, attr="Median"):
         """Extracts the median value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -329,12 +304,10 @@ class Signal:
     def standard_deviation(self, attr="Standard deviation"):
         """Extracts the standard deviation value from the signal. After being extracted,
             values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -346,12 +319,10 @@ class Signal:
 
     def minimum(self, attr="Minimum"):
         """Extracts the minimum value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -363,12 +334,10 @@ class Signal:
 
     def maximum(self, attr="Maximum"):
         """Extracts the maximum value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -380,12 +349,10 @@ class Signal:
 
     def variance(self, attr="Variance"):
         """Extracts the variance value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -397,12 +364,10 @@ class Signal:
 
     def kurtosis(self, attr="Kurtosis"):
         """Extracts the kurtosis value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
 
         signal_values = self.get_windowed_values()
@@ -414,12 +379,10 @@ class Signal:
 
     def skewness(self, attr="Skewness"):
         """Extracts the skewness value from the signal. After being extracted, values are saved to the features list.
-
            Parameters
            ----------
            attr : str
                (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
-
            """
         signal_values = self.get_windowed_values()
         feature_values = list()
@@ -428,11 +391,26 @@ class Signal:
 
         self.features.append([attr, feature_values])
 
+    def area_under_curve(self, attr="Area under curve"):
+        """Extracts the area under the curve characteristic value from the signal.
+            After being extracted, values are saved to the features list.
+           Parameters
+           ----------
+           attr : str
+               (optional) The name of the value obtained from "outputLabel" field in JSON configuration file
+           """
+
+        signal_values = self.get_windowed_values()
+        feature_values = list()
+        for window in signal_values:
+            feature_values.append(integration.trapz(window))
+
+        self.features.append([attr, feature_values])
+
     def get_values(self):
         """Support method to get values out of a sampled signal.
                     Since signal is made out of time stamps and corresponding values sometimes we just want to use the values
                     e.g: feature extraction.
-
                 """
 
         values_list = list()
@@ -511,5 +489,5 @@ class Signal:
         else:
             length_of_vector = length_of_values
 
-        for index in range(0, length_of_vector):
+        for index in range(length_of_vector):
             self.signal_samples[index][1] = new_values[index]

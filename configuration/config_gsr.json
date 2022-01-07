@@ -3,7 +3,7 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
-      "columns_to_read": {"timestamp": 1, "values": 2},
+      "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
       "options": {
         "save_processed_signal": "False",
         "draw_plot": "True"
@@ -14,27 +14,24 @@
           "order": 1,
           "attributes": {
             "samplingFrequency": 128,
-            "goalFrequency": 10
+            "goalFrequency": 4
           }
         },
         {
+          "functionName": "normalize_by_std",
+          "order": 2
+        },
+        {
           "functionName": "get_phase_part",
-          "order": 2,
+          "order": 3,
           "attributes": {
             "deg": 10,
             "maxIt": 100
           }
         },
         {
-          "functionName": "z_normalize",
-          "order": 3
-        },
-        {
           "functionName": "smooth",
-          "order": 4,
-          "attributes": {
-            "numberOfIterations": 1000
-          }
+          "order": 4
         },
         {
           "functionName": "mean",
@@ -67,6 +64,10 @@
         {
           "functionName": "skewness",
           "order": 12
+        },
+        {
+          "functionName": "area_under_curve",
+          "order": 13
         }
       ]
     }
