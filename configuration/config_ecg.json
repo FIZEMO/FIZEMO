@@ -43,6 +43,13 @@
         {
           "functionName": "get_psd_parameters",
           "order": 5
+          "outputLabel": {
+            "lf": "LF Value",
+            "hf": "HF Value",
+            "lf_norm": "LF Normal",
+            "hf_norm": "HF Normal",
+            "lf_hf": "LF - HF"
+          }
         }
       ]
     }
