@@ -148,39 +148,3 @@ class PeriodicSignal(Signal):
         self.features.append([attr.get("lf_norm", "LF Norm"), np.array([result[5][0]])])
         self.features.append([attr.get("hf_norm", "HF Norm"), np.array([result[5][1]])])
         self.features.append([attr.get("lf_hf", "LF/HF"), np.array([result[6]])])
-
-    # def get_vector_r_peaks_distance_parameters(self):
-    #     """Calculate mean, standard deviation, heart rate and RMSSD of distance R vector.
-    #         After being extracted, values are saved to the features list."""
-    #     vector_mean = mean(self.r_peaks_distance)
-    #     vector_sd = stdev(self.r_peaks_distance)
-    #     vector_hr = 60 / vector_mean
-    #     vector_rmsdd = sqrt(sum([pow(vector_mean - x, 2) for x in self.r_peaks_distance]) / (
-    #             self.r_peaks_distance.__len__() - 1)).__abs__()
-    #
-    #     self.features.append(["Mean R Distance", np.array([vector_mean])])
-    #     self.features.append(["SD R Distance", np.array([vector_sd])])
-    #     self.features.append(["HR", np.array([vector_hr])])
-    #     self.features.append(["RMSSD", np.array([vector_rmsdd])])
-    #
-    # def get_poincare_parameters(self):
-    #     """Calculate SD1 and SD2 of poincare plot.
-    #         After being extracted, values are saved to the features list."""
-    #
-    #     result = nl.poincare(nni=self.r_peaks_distance, show=False)
-    #     plt.close(result["poincare_plot"])
-    #
-    #     self.features.append(["SD1", np.array([result['sd1']])])
-    #     self.features.append(["SD2", np.array([result['sd2']])])
-    #
-    # def get_psd_parameters(self):
-    #     """Calculate LF HF, their normalized values and ratio LF/HF.
-    #     After being extracted, values are saved to the features list."""
-    #     result = fd.welch_psd(nni=self.r_peaks_distance, show=False)
-    #     plt.close(result["fft_plot"])
-    #
-    #     self.features.append(["LF", np.array([result[2][1]])])
-    #     self.features.append(["HF", np.array([result[2][2]])])
-    #     self.features.append(["LF norm", np.array([result[5][0]])])
-    #     self.features.append(["HF norm", np.array([result[5][1]])])
-    #     self.features.append(["LF/HF", np.array([result[6]])])
