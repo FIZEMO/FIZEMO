@@ -1,16 +1,16 @@
 {
   "Scenario_ECG": [
     {
-      "signalFileName": "ECG_Clip01",
+      "signalFileName": "ECG_1",
       "signalType": "ECG",
-      "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
+      "columns_to_read": {"timestamp": 1, "values": 2},
       "methods": [
         {
           "functionName": "butterworth_filter",
           "order": 1,
           "attributes": {
             "filterOrder": 5,
-            "samplingRate": 1000,
+            "samplingRate": 256,
             "type": "bandstop",
             "cutOfFrequencies": [49,51]
           }
@@ -20,7 +20,7 @@
           "order": 2,
           "attributes": {
             "filterOrder": 5,
-            "samplingRate": 1000,
+            "samplingRate": 256,
             "cutOfFrequencies": [
               5,
               15
@@ -30,15 +30,18 @@
         },
         {
           "functionName": "get_poincare_parameters",
-          "order": 7
+          "order": 3,
+          "outputLabel": {
+            "sd2": "SD2 Value"
+          }
         },
         {
           "functionName": "get_vector_r_peaks_distance_parameters",
-          "order": 8
+          "order": 4
         },
         {
           "functionName": "get_psd_parameters",
-          "order": 9,
+          "order": 5,
           "outputLabel": {
             "lf": "LF Value",
             "hf": "HF Value",
