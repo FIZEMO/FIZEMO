@@ -3,7 +3,7 @@
     {
       "signalFileName": "rawGSR",
       "signalType": "GSR",
-      "columns_to_read": {"timestamp": 1, "values": 2, "arousal": 3, "valence":  4},
+      "columns_to_read": {"timestamp": 1, "values": 2},
       "options": {
         "save_processed_signal": "False",
         "draw_plot": "True"

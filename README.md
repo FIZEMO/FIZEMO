@@ -365,14 +365,31 @@ To call function for feature extraction from the signal in configuration file on
 #### [GET VECTOR R PEAKS DISTANCE PARAMETERS]
   - Description:  Extract mean, standard deviation, heart rate and RMSSD of distance R vector.
   - Function name: `"get_vector_r_peaks_distance_parameters"`
-  - Attributes: None
+  - Default output labels:
+            {
+                "vector_mean": "Mean R Distance",
+                "vector_sd": "SD R Distance",
+                "vector_hr": "HR",
+                "vector_rmssd", "RMSSD"
+            }
 
 #### [GET POINCARE PARAMETERS]
   - Description: Extract SD1 and SD2 values from poincare plot.
   - Function name: `"get_poincare_parameters"`
-  - Attributes: None
+  - Default output labels:
+            {
+                "sd1": "SD1",
+                "sd2": "SD2"
+            }
 
 #### [GET PSD PARAMETERS]
   - Description: Extract LF HF, their normalized values and ratio LF/HF.
   - Function name: `"get_psd_parameters"`
-  - Attributes: None
+  - Default output labels:
+            {
+                "lf": "LF",
+                "hf": "HF",
+                "lf_norm": "LF Norm",
+                "hf_norm": "HF Norm",
+                "lf_hf": "LF/HF"
+            }
